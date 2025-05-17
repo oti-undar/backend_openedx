@@ -1,0 +1,40 @@
+model Examen {
+    id          String  @id @default(uuid())
+    title       String
+    description String?
+    img         String?
+    video       String?
+    user_id     String
+
+    fecha_vencimiento DateTime
+
+    state_id  Int
+    state     State       @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    preguntas Pregunta[]
+    historial Historial[]
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+}
+
+model Pregunta {
+    id          Int     @id @default(autoincrement())
+    title       String
+    description String?
+    img         String?
+    video       String?
+
+    examen_id  String
+    examen     Examen      @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    respuestas Respuesta[]
+}
+
+model Respuesta {
+    id        Int     @id @default(autoincrement())
+    respuesta String
+    correcta  Boolean @default(false)
+
+    pregunta_id Int
+    pregunta    Pregunta @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}

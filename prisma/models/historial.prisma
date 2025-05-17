@@ -1,0 +1,11 @@
+model Historial {
+    id        String @id @default(uuid())
+    user_id   String
+    examen_id String
+    examen    Examen @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    puntaje   Int
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+}

@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "migrate:fresh": "(if exist prisma\\migrations (rmdir /s /q prisma\\migrations)) && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -16,5 +18,8 @@
     "prisma": "^6.7.0",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
+  },
+  "prisma": {
+    "schema": "./prisma"
   }
 }

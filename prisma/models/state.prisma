@@ -1,0 +1,12 @@
+enum StateType {
+    Activo
+    Inactivo
+    Finalizado
+}
+
+model State {
+    id   Int       @id @default(autoincrement())
+    name StateType @unique
+
+    examenes Examen[]
+}
