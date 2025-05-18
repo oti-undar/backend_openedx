@@ -14,7 +14,7 @@ COPY prisma ./prisma
 RUN npm ci && \
     npx prisma generate && \
     npm run build && \
-    npm run migrate:fresh && \
+    npm run migrate:fresh:linux && \
     npm run seed && \
     npm prune --production
 

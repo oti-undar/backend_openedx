@@ -6,6 +6,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "migrate:fresh": "(if exist prisma\\migrations (rmdir /s /q prisma\\migrations)) && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
+    "migrate:fresh:linux": "rm -rf prisma/migrations && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
