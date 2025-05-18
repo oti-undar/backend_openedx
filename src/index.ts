@@ -8,9 +8,9 @@ app.get('/', c => {
   return c.text('Hello Hono!')
 })
 
-app.get('/users', async c => {
-  const users = await db.usuario.findMany()
-  return c.json(users)
+app.get('/examenes', async c => {
+  const examenes = await db.examen.findMany()
+  return c.json(examenes)
 })
 
 serve(
