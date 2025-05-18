@@ -13,8 +13,6 @@ COPY prisma ./prisma
 
 RUN npm ci && \
     npx prisma generate && \
-    npm run migrate:fresh:linux && \
-    npm run seed && \
     npm run build && \
     npm prune --production
 
@@ -28,6 +26,7 @@ RUN adduser --system --uid 1001 hono
 COPY --from=builder --chown=hono:nodejs /app/node_modules /app/node_modules
 COPY --from=builder --chown=hono:nodejs /app/dist /app/dist
 COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
+COPY --from=builder --chown=hono:nodejs /app/prisma /app/prisma
 
 USER hono
 EXPOSE 3000
