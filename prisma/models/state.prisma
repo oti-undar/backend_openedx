@@ -1,5 +1,7 @@
 enum StateType {
     Activo
+    Disponible
+    Suspendido
     Inactivo
     Finalizado
 }

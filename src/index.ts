@@ -1,17 +1,22 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import { db } from './db/db.js'
+import { OpenAPIHono } from '@hono/zod-openapi'
+import { docUi, openapiInfo } from './lib/doc-ui.js'
+import respuesta from './routes/respuesta/index.js'
+import pregunta from './routes/pregunta/index.js'
+import examen from './routes/examen/index.js'
 
-const app = new Hono()
+const app = new OpenAPIHono()
 
 app.get('/', c => {
   return c.text('Hello Hono!')
 })
 
-app.get('/examenes', async c => {
-  const examenes = await db.examen.findMany()
-  return c.json(examenes)
-})
+app.route('/respuesta', respuesta)
+app.route('/pregunta', pregunta)
+app.route('/examen', examen)
+
+app.get('/ui', c => c.html(docUi['Stoplight Elements']))
+app.doc('/doc', openapiInfo)
 
 serve(
   {
