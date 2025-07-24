@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node dist/index.js",
     "migrate:fresh": "(if exist prisma\\migrations (rmdir /s /q prisma\\migrations)) && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
     "migrate:fresh:linux": "rm -rf prisma/migrations && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/node": "^20.11.17",
     "prisma": "^6.7.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3"
   },
   "prisma": {
