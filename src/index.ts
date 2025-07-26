@@ -2,8 +2,11 @@ import { serve } from '@hono/node-server'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { docUi, openapiInfo } from './lib/doc-ui.js'
 import examen from './routes/examen/index.js'
+import { serveStatic } from '@hono/node-server/serve-static'
+import { cors } from 'hono/cors'
 
 const app = new OpenAPIHono()
+app.use('*', cors())
 
 app.get('/', c => {
   return c.text('Hello Hono!')
@@ -13,6 +16,8 @@ app.route('/examen', examen)
 
 app.get('/ui', c => c.html(docUi['Stoplight Elements']))
 app.doc('/doc', openapiInfo)
+
+app.use('*', serveStatic({ root: './public' }))
 
 serve(
   {

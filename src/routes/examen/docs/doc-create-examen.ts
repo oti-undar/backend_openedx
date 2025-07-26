@@ -1,11 +1,105 @@
-import { createRoute } from '@hono/zod-openapi'
-import { validateErrorResponse } from '@/schemas/validation.js'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
-  validateExamen,
-  validateExamenResponse,
-} from '../validations/validate-create-examen.js'
+  fileSchema,
+  otherErrorResponse,
+  validateErrorResponse,
+} from '@/schemas/validation.js'
+import { examenSchema, examenSchemaExample } from '../schemas/examen-schema.js'
+import {
+  preguntaSchema,
+  preguntaSchemaExample,
+} from '../schemas/pregunta-schema.js'
+import {
+  respuestaSchema,
+  respuestaSchemaExample,
+} from '../schemas/respuesta-schema.js'
 
-export const route = createRoute({
+const {
+  id,
+  created_at,
+  updated_at,
+  deleted_at,
+  img,
+  video,
+  audio,
+  ...examenExample
+} = examenSchemaExample
+const {
+  id: preguntaId,
+  examen_id,
+  img: imgPregunta,
+  video: videoPregunta,
+  audio: audioPregunta,
+  ...preguntaExample
+} = preguntaSchemaExample
+const {
+  id: respuestaId,
+  pregunta_id,
+  img: imgRespuesta,
+  video: videoRespuesta,
+  audio: audioRespuesta,
+  ...respuestaExample
+} = respuestaSchemaExample
+
+const createExamenSchema = examenSchema
+  .omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+    deleted_at: true,
+    img: true,
+    video: true,
+    audio: true,
+  })
+  .extend({
+    archivo: fileSchema,
+    preguntas: z
+      .array(
+        preguntaSchema
+          .omit({
+            id: true,
+            examen_id: true,
+            img: true,
+            video: true,
+            audio: true,
+          })
+          .extend({
+            archivo: fileSchema,
+            respuestas: z
+              .array(
+                respuestaSchema
+                  .omit({
+                    id: true,
+                    pregunta_id: true,
+                    img: true,
+                    video: true,
+                    audio: true,
+                  })
+                  .extend({
+                    archivo: fileSchema,
+                  })
+              )
+              .min(4),
+          })
+      )
+      .min(1),
+  })
+  .openapi({
+    example: {
+      ...examenExample,
+      preguntas: [
+        {
+          ...preguntaExample,
+          respuestas: [respuestaExample],
+        },
+      ],
+    },
+  })
+  .openapi('Create_Examen_Schema')
+
+export type CreateExamenSchemaProps = z.infer<typeof createExamenSchema>
+
+export const createExamenRoute = createRoute({
   method: 'post',
   path: '/',
   tags: ['Examen'],
@@ -16,7 +110,7 @@ export const route = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: validateExamen,
+          schema: createExamenSchema,
         },
       },
       required: true,
@@ -24,10 +118,11 @@ export const route = createRoute({
   },
   responses: {
     ...validateErrorResponse,
+    ...otherErrorResponse,
     200: {
       content: {
         'application/json': {
-          schema: validateExamenResponse,
+          schema: examenSchema,
         },
       },
       description: 'Devuelve el examen creado',

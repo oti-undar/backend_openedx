@@ -7,7 +7,8 @@ model Examen {
     audio       String?
     peso        Int     @default(1) @db.TinyInt
 
-    user_id String
+    user_id  String
+    curso_id String
 
     inicio_examen DateTime?
     final_examen  DateTime?
@@ -17,6 +18,7 @@ model Examen {
     preguntas   Pregunta[]
     historial   Historial[]
     ejecuciones EjecucionExamen[]
+    curso       Curso             @relation(fields: [curso_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
@@ -31,7 +33,7 @@ model Pregunta {
     video                     String?
     audio                     String?
     puntos                    Int                         @default(1) @db.TinyInt
-    duracion                  Decimal                     @db.Decimal(6, 2)
+    duracion                  Decimal?                    @db.Decimal(6, 2)
     inicio_pregunta           DateTime?
     examen_id                 String
     examen                    Examen                      @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

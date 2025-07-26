@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 
-const examenSchemaExample = {
+export const examenSchemaExample = {
   id: '123e4567-e89b-12d3-a456-426614174000',
   title: 'Examen de prueba',
   description: 'Descripción del examen',
@@ -9,12 +9,13 @@ const examenSchemaExample = {
   audio: 'https://example.com/audio.mp3',
   peso: 1,
   user_id: '123e4567-e89b-12d3-a456-426614174000',
-  inicio_examen: '2025-05-23 21:54:05',
-  final_examen: '2025-05-23 21:54:05',
+  curso_id: '123e4567-e89b-12d3-a456-426614174000',
+  inicio_examen: '2025-05-23T21:54:05.000Z',
+  final_examen: '2025-05-23T21:54:05.000Z',
   state_id: 1,
-  created_at: '2025-05-23 21:54:05',
-  updated_at: '2025-05-23 21:54:05',
-  deleted_at: '2025-05-23 21:54:05',
+  created_at: '2025-05-23T21:54:05.000Z',
+  updated_at: '2025-05-23T21:54:05.000Z',
+  deleted_at: '2025-05-23T21:54:05.000Z',
 }
 
 export const examenSchema = z
@@ -42,6 +43,9 @@ export const examenSchema = z
     }),
     user_id: z.string().openapi({
       example: examenSchemaExample.user_id,
+    }),
+    curso_id: z.string().openapi({
+      example: examenSchemaExample.curso_id,
     }),
     inicio_examen: z.string().datetime().optional().nullable().openapi({
       example: examenSchemaExample.inicio_examen,
