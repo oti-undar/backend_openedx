@@ -3,6 +3,19 @@ model Curso {
     name String
 
     examenes Examen[]
+    usuarios UsuarioCurso[]
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+}
+
+model UsuarioCurso {
+    id       Int    @id @default(autoincrement())
+    user_id  String
+    curso_id String
+
+    curso Curso @relation(fields: [curso_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt

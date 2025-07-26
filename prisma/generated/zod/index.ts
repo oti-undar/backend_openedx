@@ -35,6 +35,8 @@ export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCo
 
 export const CursoScalarFieldEnumSchema = z.enum(['id','name','created_at','updated_at','deleted_at']);
 
+export const UsuarioCursoScalarFieldEnumSchema = z.enum(['id','user_id','curso_id','created_at','updated_at','deleted_at']);
+
 export const EjecucionExamenScalarFieldEnumSchema = z.enum(['id','alumno_id','examen_id','final_examen','created_at','updated_at','deleted_at']);
 
 export const RespuestasEjecucionExamenScalarFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id','created_at','updated_at','deleted_at']);
@@ -54,6 +56,8 @@ export const SortOrderSchema = z.enum(['asc','desc']);
 export const NullsOrderSchema = z.enum(['first','last']);
 
 export const CursoOrderByRelevanceFieldEnumSchema = z.enum(['id','name']);
+
+export const UsuarioCursoOrderByRelevanceFieldEnumSchema = z.enum(['user_id','curso_id']);
 
 export const EjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','alumno_id','examen_id']);
 
@@ -88,6 +92,21 @@ export const CursoSchema = z.object({
 })
 
 export type Curso = z.infer<typeof CursoSchema>
+
+/////////////////////////////////////////
+// USUARIO CURSO SCHEMA
+/////////////////////////////////////////
+
+export const UsuarioCursoSchema = z.object({
+  id: z.number().int(),
+  user_id: z.string(),
+  curso_id: z.string(),
+  created_at: z.coerce.date(),
+  updated_at: z.coerce.date(),
+  deleted_at: z.coerce.date().nullable(),
+})
+
+export type UsuarioCurso = z.infer<typeof UsuarioCursoSchema>
 
 /////////////////////////////////////////
 // EJECUCION EXAMEN SCHEMA
@@ -216,6 +235,7 @@ export type State = z.infer<typeof StateSchema>
 
 export const CursoIncludeSchema: z.ZodType<Prisma.CursoInclude> = z.object({
   examenes: z.union([z.boolean(),z.lazy(() => ExamenFindManyArgsSchema)]).optional(),
+  usuarios: z.union([z.boolean(),z.lazy(() => UsuarioCursoFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CursoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -230,6 +250,7 @@ export const CursoCountOutputTypeArgsSchema: z.ZodType<Prisma.CursoCountOutputTy
 
 export const CursoCountOutputTypeSelectSchema: z.ZodType<Prisma.CursoCountOutputTypeSelect> = z.object({
   examenes: z.boolean().optional(),
+  usuarios: z.boolean().optional(),
 }).strict();
 
 export const CursoSelectSchema: z.ZodType<Prisma.CursoSelect> = z.object({
@@ -239,7 +260,30 @@ export const CursoSelectSchema: z.ZodType<Prisma.CursoSelect> = z.object({
   updated_at: z.boolean().optional(),
   deleted_at: z.boolean().optional(),
   examenes: z.union([z.boolean(),z.lazy(() => ExamenFindManyArgsSchema)]).optional(),
+  usuarios: z.union([z.boolean(),z.lazy(() => UsuarioCursoFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CursoCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// USUARIO CURSO
+//------------------------------------------------------
+
+export const UsuarioCursoIncludeSchema: z.ZodType<Prisma.UsuarioCursoInclude> = z.object({
+  curso: z.union([z.boolean(),z.lazy(() => CursoArgsSchema)]).optional(),
+}).strict()
+
+export const UsuarioCursoArgsSchema: z.ZodType<Prisma.UsuarioCursoDefaultArgs> = z.object({
+  select: z.lazy(() => UsuarioCursoSelectSchema).optional(),
+  include: z.lazy(() => UsuarioCursoIncludeSchema).optional(),
+}).strict();
+
+export const UsuarioCursoSelectSchema: z.ZodType<Prisma.UsuarioCursoSelect> = z.object({
+  id: z.boolean().optional(),
+  user_id: z.boolean().optional(),
+  curso_id: z.boolean().optional(),
+  created_at: z.boolean().optional(),
+  updated_at: z.boolean().optional(),
+  deleted_at: z.boolean().optional(),
+  curso: z.union([z.boolean(),z.lazy(() => CursoArgsSchema)]).optional(),
 }).strict()
 
 // EJECUCION EXAMEN
@@ -496,7 +540,8 @@ export const CursoWhereInputSchema: z.ZodType<Prisma.CursoWhereInput> = z.object
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  examenes: z.lazy(() => ExamenListRelationFilterSchema).optional()
+  examenes: z.lazy(() => ExamenListRelationFilterSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoListRelationFilterSchema).optional()
 }).strict();
 
 export const CursoOrderByWithRelationInputSchema: z.ZodType<Prisma.CursoOrderByWithRelationInput> = z.object({
@@ -506,6 +551,7 @@ export const CursoOrderByWithRelationInputSchema: z.ZodType<Prisma.CursoOrderByW
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   examenes: z.lazy(() => ExamenOrderByRelationAggregateInputSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoOrderByRelationAggregateInputSchema).optional(),
   _relevance: z.lazy(() => CursoOrderByRelevanceInputSchema).optional()
 }).strict();
 
@@ -521,7 +567,8 @@ export const CursoWhereUniqueInputSchema: z.ZodType<Prisma.CursoWhereUniqueInput
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  examenes: z.lazy(() => ExamenListRelationFilterSchema).optional()
+  examenes: z.lazy(() => ExamenListRelationFilterSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoListRelationFilterSchema).optional()
 }).strict());
 
 export const CursoOrderByWithAggregationInputSchema: z.ZodType<Prisma.CursoOrderByWithAggregationInput> = z.object({
@@ -541,6 +588,72 @@ export const CursoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CursoSc
   NOT: z.union([ z.lazy(() => CursoScalarWhereWithAggregatesInputSchema),z.lazy(() => CursoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  deleted_at: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoWhereInputSchema: z.ZodType<Prisma.UsuarioCursoWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => UsuarioCursoWhereInputSchema),z.lazy(() => UsuarioCursoWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UsuarioCursoWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UsuarioCursoWhereInputSchema),z.lazy(() => UsuarioCursoWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  user_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  curso_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  curso: z.union([ z.lazy(() => CursoScalarRelationFilterSchema),z.lazy(() => CursoWhereInputSchema) ]).optional(),
+}).strict();
+
+export const UsuarioCursoOrderByWithRelationInputSchema: z.ZodType<Prisma.UsuarioCursoOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  user_id: z.lazy(() => SortOrderSchema).optional(),
+  curso_id: z.lazy(() => SortOrderSchema).optional(),
+  created_at: z.lazy(() => SortOrderSchema).optional(),
+  updated_at: z.lazy(() => SortOrderSchema).optional(),
+  deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  curso: z.lazy(() => CursoOrderByWithRelationInputSchema).optional(),
+  _relevance: z.lazy(() => UsuarioCursoOrderByRelevanceInputSchema).optional()
+}).strict();
+
+export const UsuarioCursoWhereUniqueInputSchema: z.ZodType<Prisma.UsuarioCursoWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => UsuarioCursoWhereInputSchema),z.lazy(() => UsuarioCursoWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UsuarioCursoWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UsuarioCursoWhereInputSchema),z.lazy(() => UsuarioCursoWhereInputSchema).array() ]).optional(),
+  user_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  curso_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  curso: z.union([ z.lazy(() => CursoScalarRelationFilterSchema),z.lazy(() => CursoWhereInputSchema) ]).optional(),
+}).strict());
+
+export const UsuarioCursoOrderByWithAggregationInputSchema: z.ZodType<Prisma.UsuarioCursoOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  user_id: z.lazy(() => SortOrderSchema).optional(),
+  curso_id: z.lazy(() => SortOrderSchema).optional(),
+  created_at: z.lazy(() => SortOrderSchema).optional(),
+  updated_at: z.lazy(() => SortOrderSchema).optional(),
+  deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  _count: z.lazy(() => UsuarioCursoCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => UsuarioCursoAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => UsuarioCursoMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => UsuarioCursoMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => UsuarioCursoSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const UsuarioCursoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UsuarioCursoScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => UsuarioCursoScalarWhereWithAggregatesInputSchema),z.lazy(() => UsuarioCursoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UsuarioCursoScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UsuarioCursoScalarWhereWithAggregatesInputSchema),z.lazy(() => UsuarioCursoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  user_id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  curso_id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1115,7 +1228,8 @@ export const CursoCreateInputSchema: z.ZodType<Prisma.CursoCreateInput> = z.obje
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
-  examenes: z.lazy(() => ExamenCreateNestedManyWithoutCursoInputSchema).optional()
+  examenes: z.lazy(() => ExamenCreateNestedManyWithoutCursoInputSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoCreateNestedManyWithoutCursoInputSchema).optional()
 }).strict();
 
 export const CursoUncheckedCreateInputSchema: z.ZodType<Prisma.CursoUncheckedCreateInput> = z.object({
@@ -1124,7 +1238,8 @@ export const CursoUncheckedCreateInputSchema: z.ZodType<Prisma.CursoUncheckedCre
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
-  examenes: z.lazy(() => ExamenUncheckedCreateNestedManyWithoutCursoInputSchema).optional()
+  examenes: z.lazy(() => ExamenUncheckedCreateNestedManyWithoutCursoInputSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoUncheckedCreateNestedManyWithoutCursoInputSchema).optional()
 }).strict();
 
 export const CursoUpdateInputSchema: z.ZodType<Prisma.CursoUpdateInput> = z.object({
@@ -1133,7 +1248,8 @@ export const CursoUpdateInputSchema: z.ZodType<Prisma.CursoUpdateInput> = z.obje
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  examenes: z.lazy(() => ExamenUpdateManyWithoutCursoNestedInputSchema).optional()
+  examenes: z.lazy(() => ExamenUpdateManyWithoutCursoNestedInputSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoUpdateManyWithoutCursoNestedInputSchema).optional()
 }).strict();
 
 export const CursoUncheckedUpdateInputSchema: z.ZodType<Prisma.CursoUncheckedUpdateInput> = z.object({
@@ -1142,7 +1258,8 @@ export const CursoUncheckedUpdateInputSchema: z.ZodType<Prisma.CursoUncheckedUpd
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  examenes: z.lazy(() => ExamenUncheckedUpdateManyWithoutCursoNestedInputSchema).optional()
+  examenes: z.lazy(() => ExamenUncheckedUpdateManyWithoutCursoNestedInputSchema).optional(),
+  usuarios: z.lazy(() => UsuarioCursoUncheckedUpdateManyWithoutCursoNestedInputSchema).optional()
 }).strict();
 
 export const CursoCreateManyInputSchema: z.ZodType<Prisma.CursoCreateManyInput> = z.object({
@@ -1164,6 +1281,65 @@ export const CursoUpdateManyMutationInputSchema: z.ZodType<Prisma.CursoUpdateMan
 export const CursoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CursoUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoCreateInputSchema: z.ZodType<Prisma.UsuarioCursoCreateInput> = z.object({
+  user_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable(),
+  curso: z.lazy(() => CursoCreateNestedOneWithoutUsuariosInputSchema)
+}).strict();
+
+export const UsuarioCursoUncheckedCreateInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  user_id: z.string(),
+  curso_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable()
+}).strict();
+
+export const UsuarioCursoUpdateInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateInput> = z.object({
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  curso: z.lazy(() => CursoUpdateOneRequiredWithoutUsuariosNestedInputSchema).optional()
+}).strict();
+
+export const UsuarioCursoUncheckedUpdateInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  curso_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoCreateManyInputSchema: z.ZodType<Prisma.UsuarioCursoCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  user_id: z.string(),
+  curso_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable()
+}).strict();
+
+export const UsuarioCursoUpdateManyMutationInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateManyMutationInput> = z.object({
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  curso_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -1758,12 +1934,22 @@ export const ExamenListRelationFilterSchema: z.ZodType<Prisma.ExamenListRelation
   none: z.lazy(() => ExamenWhereInputSchema).optional()
 }).strict();
 
+export const UsuarioCursoListRelationFilterSchema: z.ZodType<Prisma.UsuarioCursoListRelationFilter> = z.object({
+  every: z.lazy(() => UsuarioCursoWhereInputSchema).optional(),
+  some: z.lazy(() => UsuarioCursoWhereInputSchema).optional(),
+  none: z.lazy(() => UsuarioCursoWhereInputSchema).optional()
+}).strict();
+
 export const SortOrderInputSchema: z.ZodType<Prisma.SortOrderInput> = z.object({
   sort: z.lazy(() => SortOrderSchema),
   nulls: z.lazy(() => NullsOrderSchema).optional()
 }).strict();
 
 export const ExamenOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ExamenOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UsuarioCursoOrderByRelationAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -1843,6 +2029,79 @@ export const DateTimeNullableWithAggregatesFilterSchema: z.ZodType<Prisma.DateTi
   _max: z.lazy(() => NestedDateTimeNullableFilterSchema).optional()
 }).strict();
 
+export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
+}).strict();
+
+export const CursoScalarRelationFilterSchema: z.ZodType<Prisma.CursoScalarRelationFilter> = z.object({
+  is: z.lazy(() => CursoWhereInputSchema).optional(),
+  isNot: z.lazy(() => CursoWhereInputSchema).optional()
+}).strict();
+
+export const UsuarioCursoOrderByRelevanceInputSchema: z.ZodType<Prisma.UsuarioCursoOrderByRelevanceInput> = z.object({
+  fields: z.union([ z.lazy(() => UsuarioCursoOrderByRelevanceFieldEnumSchema),z.lazy(() => UsuarioCursoOrderByRelevanceFieldEnumSchema).array() ]),
+  sort: z.lazy(() => SortOrderSchema),
+  search: z.string()
+}).strict();
+
+export const UsuarioCursoCountOrderByAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  user_id: z.lazy(() => SortOrderSchema).optional(),
+  curso_id: z.lazy(() => SortOrderSchema).optional(),
+  created_at: z.lazy(() => SortOrderSchema).optional(),
+  updated_at: z.lazy(() => SortOrderSchema).optional(),
+  deleted_at: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UsuarioCursoAvgOrderByAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UsuarioCursoMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  user_id: z.lazy(() => SortOrderSchema).optional(),
+  curso_id: z.lazy(() => SortOrderSchema).optional(),
+  created_at: z.lazy(() => SortOrderSchema).optional(),
+  updated_at: z.lazy(() => SortOrderSchema).optional(),
+  deleted_at: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UsuarioCursoMinOrderByAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  user_id: z.lazy(() => SortOrderSchema).optional(),
+  curso_id: z.lazy(() => SortOrderSchema).optional(),
+  created_at: z.lazy(() => SortOrderSchema).optional(),
+  updated_at: z.lazy(() => SortOrderSchema).optional(),
+  deleted_at: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UsuarioCursoSumOrderByAggregateInputSchema: z.ZodType<Prisma.UsuarioCursoSumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
 export const ExamenScalarRelationFilterSchema: z.ZodType<Prisma.ExamenScalarRelationFilter> = z.object({
   is: z.lazy(() => ExamenWhereInputSchema).optional(),
   isNot: z.lazy(() => ExamenWhereInputSchema).optional()
@@ -1892,17 +2151,6 @@ export const EjecucionExamenMinOrderByAggregateInputSchema: z.ZodType<Prisma.Eje
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
 export const EjecucionExamenScalarRelationFilterSchema: z.ZodType<Prisma.EjecucionExamenScalarRelationFilter> = z.object({
@@ -1966,22 +2214,6 @@ export const RespuestasEjecucionExamenSumOrderByAggregateInputSchema: z.ZodType<
   respuesta_id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntFilterSchema).optional()
-}).strict();
-
 export const StringNullableFilterSchema: z.ZodType<Prisma.StringNullableFilter> = z.object({
   equals: z.string().optional().nullable(),
   in: z.string().array().optional().nullable(),
@@ -2018,11 +2250,6 @@ export const EjecucionExamenListRelationFilterSchema: z.ZodType<Prisma.Ejecucion
   every: z.lazy(() => EjecucionExamenWhereInputSchema).optional(),
   some: z.lazy(() => EjecucionExamenWhereInputSchema).optional(),
   none: z.lazy(() => EjecucionExamenWhereInputSchema).optional()
-}).strict();
-
-export const CursoScalarRelationFilterSchema: z.ZodType<Prisma.CursoScalarRelationFilter> = z.object({
-  is: z.lazy(() => CursoWhereInputSchema).optional(),
-  isNot: z.lazy(() => CursoWhereInputSchema).optional()
 }).strict();
 
 export const PreguntaOrderByRelationAggregateInputSchema: z.ZodType<Prisma.PreguntaOrderByRelationAggregateInput> = z.object({
@@ -2369,11 +2596,25 @@ export const ExamenCreateNestedManyWithoutCursoInputSchema: z.ZodType<Prisma.Exa
   connect: z.union([ z.lazy(() => ExamenWhereUniqueInputSchema),z.lazy(() => ExamenWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const UsuarioCursoCreateNestedManyWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoCreateNestedManyWithoutCursoInput> = z.object({
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema).array(),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => UsuarioCursoCreateManyCursoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const ExamenUncheckedCreateNestedManyWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateNestedManyWithoutCursoInput> = z.object({
   create: z.union([ z.lazy(() => ExamenCreateWithoutCursoInputSchema),z.lazy(() => ExamenCreateWithoutCursoInputSchema).array(),z.lazy(() => ExamenUncheckedCreateWithoutCursoInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ExamenCreateOrConnectWithoutCursoInputSchema),z.lazy(() => ExamenCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
   createMany: z.lazy(() => ExamenCreateManyCursoInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => ExamenWhereUniqueInputSchema),z.lazy(() => ExamenWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const UsuarioCursoUncheckedCreateNestedManyWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedCreateNestedManyWithoutCursoInput> = z.object({
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema).array(),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => UsuarioCursoCreateManyCursoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFieldUpdateOperationsInput> = z.object({
@@ -2402,6 +2643,20 @@ export const ExamenUpdateManyWithoutCursoNestedInputSchema: z.ZodType<Prisma.Exa
   deleteMany: z.union([ z.lazy(() => ExamenScalarWhereInputSchema),z.lazy(() => ExamenScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const UsuarioCursoUpdateManyWithoutCursoNestedInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateManyWithoutCursoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema).array(),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => UsuarioCursoUpsertWithWhereUniqueWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpsertWithWhereUniqueWithoutCursoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => UsuarioCursoCreateManyCursoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => UsuarioCursoUpdateWithWhereUniqueWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpdateWithWhereUniqueWithoutCursoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => UsuarioCursoUpdateManyWithWhereWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpdateManyWithWhereWithoutCursoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => UsuarioCursoScalarWhereInputSchema),z.lazy(() => UsuarioCursoScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const ExamenUncheckedUpdateManyWithoutCursoNestedInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutCursoNestedInput> = z.object({
   create: z.union([ z.lazy(() => ExamenCreateWithoutCursoInputSchema),z.lazy(() => ExamenCreateWithoutCursoInputSchema).array(),z.lazy(() => ExamenUncheckedCreateWithoutCursoInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ExamenCreateOrConnectWithoutCursoInputSchema),z.lazy(() => ExamenCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
@@ -2414,6 +2669,42 @@ export const ExamenUncheckedUpdateManyWithoutCursoNestedInputSchema: z.ZodType<P
   update: z.union([ z.lazy(() => ExamenUpdateWithWhereUniqueWithoutCursoInputSchema),z.lazy(() => ExamenUpdateWithWhereUniqueWithoutCursoInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => ExamenUpdateManyWithWhereWithoutCursoInputSchema),z.lazy(() => ExamenUpdateManyWithWhereWithoutCursoInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => ExamenScalarWhereInputSchema),z.lazy(() => ExamenScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const UsuarioCursoUncheckedUpdateManyWithoutCursoNestedInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedUpdateManyWithoutCursoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema).array(),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema),z.lazy(() => UsuarioCursoCreateOrConnectWithoutCursoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => UsuarioCursoUpsertWithWhereUniqueWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpsertWithWhereUniqueWithoutCursoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => UsuarioCursoCreateManyCursoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => UsuarioCursoWhereUniqueInputSchema),z.lazy(() => UsuarioCursoWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => UsuarioCursoUpdateWithWhereUniqueWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpdateWithWhereUniqueWithoutCursoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => UsuarioCursoUpdateManyWithWhereWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUpdateManyWithWhereWithoutCursoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => UsuarioCursoScalarWhereInputSchema),z.lazy(() => UsuarioCursoScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const CursoCreateNestedOneWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoCreateNestedOneWithoutUsuariosInput> = z.object({
+  create: z.union([ z.lazy(() => CursoCreateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedCreateWithoutUsuariosInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => CursoCreateOrConnectWithoutUsuariosInputSchema).optional(),
+  connect: z.lazy(() => CursoWhereUniqueInputSchema).optional()
+}).strict();
+
+export const CursoUpdateOneRequiredWithoutUsuariosNestedInputSchema: z.ZodType<Prisma.CursoUpdateOneRequiredWithoutUsuariosNestedInput> = z.object({
+  create: z.union([ z.lazy(() => CursoCreateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedCreateWithoutUsuariosInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => CursoCreateOrConnectWithoutUsuariosInputSchema).optional(),
+  upsert: z.lazy(() => CursoUpsertWithoutUsuariosInputSchema).optional(),
+  connect: z.lazy(() => CursoWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => CursoUpdateToOneWithWhereWithoutUsuariosInputSchema),z.lazy(() => CursoUpdateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedUpdateWithoutUsuariosInputSchema) ]).optional(),
+}).strict();
+
+export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
 }).strict();
 
 export const ExamenCreateNestedOneWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenCreateNestedOneWithoutEjecucionesInput> = z.object({
@@ -2512,14 +2803,6 @@ export const RespuestaUpdateOneRequiredWithoutRespuestasEjecucionExamenNestedInp
   upsert: z.lazy(() => RespuestaUpsertWithoutRespuestasEjecucionExamenInputSchema).optional(),
   connect: z.lazy(() => RespuestaWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => RespuestaUpdateToOneWithWhereWithoutRespuestasEjecucionExamenInputSchema),z.lazy(() => RespuestaUpdateWithoutRespuestasEjecucionExamenInputSchema),z.lazy(() => RespuestaUncheckedUpdateWithoutRespuestasEjecucionExamenInputSchema) ]).optional(),
-}).strict();
-
-export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
 }).strict();
 
 export const StateCreateNestedOneWithoutExamenesInputSchema: z.ZodType<Prisma.StateCreateNestedOneWithoutExamenesInput> = z.object({
@@ -3178,6 +3461,31 @@ export const ExamenCreateManyCursoInputEnvelopeSchema: z.ZodType<Prisma.ExamenCr
   skipDuplicates: z.boolean().optional()
 }).strict();
 
+export const UsuarioCursoCreateWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoCreateWithoutCursoInput> = z.object({
+  user_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable()
+}).strict();
+
+export const UsuarioCursoUncheckedCreateWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedCreateWithoutCursoInput> = z.object({
+  id: z.number().int().optional(),
+  user_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable()
+}).strict();
+
+export const UsuarioCursoCreateOrConnectWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoCreateOrConnectWithoutCursoInput> = z.object({
+  where: z.lazy(() => UsuarioCursoWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema) ]),
+}).strict();
+
+export const UsuarioCursoCreateManyCursoInputEnvelopeSchema: z.ZodType<Prisma.UsuarioCursoCreateManyCursoInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => UsuarioCursoCreateManyCursoInputSchema),z.lazy(() => UsuarioCursoCreateManyCursoInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
 export const ExamenUpsertWithWhereUniqueWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUpsertWithWhereUniqueWithoutCursoInput> = z.object({
   where: z.lazy(() => ExamenWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => ExamenUpdateWithoutCursoInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutCursoInputSchema) ]),
@@ -3213,6 +3521,86 @@ export const ExamenScalarWhereInputSchema: z.ZodType<Prisma.ExamenScalarWhereInp
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoUpsertWithWhereUniqueWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUpsertWithWhereUniqueWithoutCursoInput> = z.object({
+  where: z.lazy(() => UsuarioCursoWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => UsuarioCursoUpdateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedUpdateWithoutCursoInputSchema) ]),
+  create: z.union([ z.lazy(() => UsuarioCursoCreateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedCreateWithoutCursoInputSchema) ]),
+}).strict();
+
+export const UsuarioCursoUpdateWithWhereUniqueWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateWithWhereUniqueWithoutCursoInput> = z.object({
+  where: z.lazy(() => UsuarioCursoWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => UsuarioCursoUpdateWithoutCursoInputSchema),z.lazy(() => UsuarioCursoUncheckedUpdateWithoutCursoInputSchema) ]),
+}).strict();
+
+export const UsuarioCursoUpdateManyWithWhereWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateManyWithWhereWithoutCursoInput> = z.object({
+  where: z.lazy(() => UsuarioCursoScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => UsuarioCursoUpdateManyMutationInputSchema),z.lazy(() => UsuarioCursoUncheckedUpdateManyWithoutCursoInputSchema) ]),
+}).strict();
+
+export const UsuarioCursoScalarWhereInputSchema: z.ZodType<Prisma.UsuarioCursoScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => UsuarioCursoScalarWhereInputSchema),z.lazy(() => UsuarioCursoScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UsuarioCursoScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UsuarioCursoScalarWhereInputSchema),z.lazy(() => UsuarioCursoScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  user_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  curso_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+}).strict();
+
+export const CursoCreateWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoCreateWithoutUsuariosInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable(),
+  examenes: z.lazy(() => ExamenCreateNestedManyWithoutCursoInputSchema).optional()
+}).strict();
+
+export const CursoUncheckedCreateWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoUncheckedCreateWithoutUsuariosInput> = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable(),
+  examenes: z.lazy(() => ExamenUncheckedCreateNestedManyWithoutCursoInputSchema).optional()
+}).strict();
+
+export const CursoCreateOrConnectWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoCreateOrConnectWithoutUsuariosInput> = z.object({
+  where: z.lazy(() => CursoWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => CursoCreateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedCreateWithoutUsuariosInputSchema) ]),
+}).strict();
+
+export const CursoUpsertWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoUpsertWithoutUsuariosInput> = z.object({
+  update: z.union([ z.lazy(() => CursoUpdateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedUpdateWithoutUsuariosInputSchema) ]),
+  create: z.union([ z.lazy(() => CursoCreateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedCreateWithoutUsuariosInputSchema) ]),
+  where: z.lazy(() => CursoWhereInputSchema).optional()
+}).strict();
+
+export const CursoUpdateToOneWithWhereWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoUpdateToOneWithWhereWithoutUsuariosInput> = z.object({
+  where: z.lazy(() => CursoWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => CursoUpdateWithoutUsuariosInputSchema),z.lazy(() => CursoUncheckedUpdateWithoutUsuariosInputSchema) ]),
+}).strict();
+
+export const CursoUpdateWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoUpdateWithoutUsuariosInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  examenes: z.lazy(() => ExamenUpdateManyWithoutCursoNestedInputSchema).optional()
+}).strict();
+
+export const CursoUncheckedUpdateWithoutUsuariosInputSchema: z.ZodType<Prisma.CursoUncheckedUpdateWithoutUsuariosInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  examenes: z.lazy(() => ExamenUncheckedUpdateManyWithoutCursoNestedInputSchema).optional()
 }).strict();
 
 export const ExamenCreateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenCreateWithoutEjecucionesInput> = z.object({
@@ -3662,7 +4050,8 @@ export const CursoCreateWithoutExamenesInputSchema: z.ZodType<Prisma.CursoCreate
   name: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
-  deleted_at: z.coerce.date().optional().nullable()
+  deleted_at: z.coerce.date().optional().nullable(),
+  usuarios: z.lazy(() => UsuarioCursoCreateNestedManyWithoutCursoInputSchema).optional()
 }).strict();
 
 export const CursoUncheckedCreateWithoutExamenesInputSchema: z.ZodType<Prisma.CursoUncheckedCreateWithoutExamenesInput> = z.object({
@@ -3670,7 +4059,8 @@ export const CursoUncheckedCreateWithoutExamenesInputSchema: z.ZodType<Prisma.Cu
   name: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
-  deleted_at: z.coerce.date().optional().nullable()
+  deleted_at: z.coerce.date().optional().nullable(),
+  usuarios: z.lazy(() => UsuarioCursoUncheckedCreateNestedManyWithoutCursoInputSchema).optional()
 }).strict();
 
 export const CursoCreateOrConnectWithoutExamenesInputSchema: z.ZodType<Prisma.CursoCreateOrConnectWithoutExamenesInput> = z.object({
@@ -3805,6 +4195,7 @@ export const CursoUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.CursoUpdate
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  usuarios: z.lazy(() => UsuarioCursoUpdateManyWithoutCursoNestedInputSchema).optional()
 }).strict();
 
 export const CursoUncheckedUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.CursoUncheckedUpdateWithoutExamenesInput> = z.object({
@@ -3813,6 +4204,7 @@ export const CursoUncheckedUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.Cu
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  usuarios: z.lazy(() => UsuarioCursoUncheckedUpdateManyWithoutCursoNestedInputSchema).optional()
 }).strict();
 
 export const ExamenCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenCreateWithoutPreguntasInput> = z.object({
@@ -4306,6 +4698,14 @@ export const ExamenCreateManyCursoInputSchema: z.ZodType<Prisma.ExamenCreateMany
   deleted_at: z.coerce.date().optional().nullable()
 }).strict();
 
+export const UsuarioCursoCreateManyCursoInputSchema: z.ZodType<Prisma.UsuarioCursoCreateManyCursoInput> = z.object({
+  id: z.number().int().optional(),
+  user_id: z.string(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable()
+}).strict();
+
 export const ExamenUpdateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutCursoInput> = z.object({
   id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4358,6 +4758,29 @@ export const ExamenUncheckedUpdateManyWithoutCursoInputSchema: z.ZodType<Prisma.
   inicio_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoUpdateWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUpdateWithoutCursoInput> = z.object({
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoUncheckedUpdateWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedUpdateWithoutCursoInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const UsuarioCursoUncheckedUpdateManyWithoutCursoInputSchema: z.ZodType<Prisma.UsuarioCursoUncheckedUpdateManyWithoutCursoInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4771,6 +5194,68 @@ export const CursoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CursoFindUniqueO
   select: CursoSelectSchema.optional(),
   include: CursoIncludeSchema.optional(),
   where: CursoWhereUniqueInputSchema,
+}).strict() ;
+
+export const UsuarioCursoFindFirstArgsSchema: z.ZodType<Prisma.UsuarioCursoFindFirstArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereInputSchema.optional(),
+  orderBy: z.union([ UsuarioCursoOrderByWithRelationInputSchema.array(),UsuarioCursoOrderByWithRelationInputSchema ]).optional(),
+  cursor: UsuarioCursoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UsuarioCursoScalarFieldEnumSchema,UsuarioCursoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UsuarioCursoFindFirstOrThrowArgsSchema: z.ZodType<Prisma.UsuarioCursoFindFirstOrThrowArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereInputSchema.optional(),
+  orderBy: z.union([ UsuarioCursoOrderByWithRelationInputSchema.array(),UsuarioCursoOrderByWithRelationInputSchema ]).optional(),
+  cursor: UsuarioCursoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UsuarioCursoScalarFieldEnumSchema,UsuarioCursoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UsuarioCursoFindManyArgsSchema: z.ZodType<Prisma.UsuarioCursoFindManyArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereInputSchema.optional(),
+  orderBy: z.union([ UsuarioCursoOrderByWithRelationInputSchema.array(),UsuarioCursoOrderByWithRelationInputSchema ]).optional(),
+  cursor: UsuarioCursoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UsuarioCursoScalarFieldEnumSchema,UsuarioCursoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UsuarioCursoAggregateArgsSchema: z.ZodType<Prisma.UsuarioCursoAggregateArgs> = z.object({
+  where: UsuarioCursoWhereInputSchema.optional(),
+  orderBy: z.union([ UsuarioCursoOrderByWithRelationInputSchema.array(),UsuarioCursoOrderByWithRelationInputSchema ]).optional(),
+  cursor: UsuarioCursoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const UsuarioCursoGroupByArgsSchema: z.ZodType<Prisma.UsuarioCursoGroupByArgs> = z.object({
+  where: UsuarioCursoWhereInputSchema.optional(),
+  orderBy: z.union([ UsuarioCursoOrderByWithAggregationInputSchema.array(),UsuarioCursoOrderByWithAggregationInputSchema ]).optional(),
+  by: UsuarioCursoScalarFieldEnumSchema.array(),
+  having: UsuarioCursoScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const UsuarioCursoFindUniqueArgsSchema: z.ZodType<Prisma.UsuarioCursoFindUniqueArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereUniqueInputSchema,
+}).strict() ;
+
+export const UsuarioCursoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.UsuarioCursoFindUniqueOrThrowArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereUniqueInputSchema,
 }).strict() ;
 
 export const EjecucionExamenFindFirstArgsSchema: z.ZodType<Prisma.EjecucionExamenFindFirstArgs> = z.object({
@@ -5247,6 +5732,49 @@ export const CursoUpdateManyArgsSchema: z.ZodType<Prisma.CursoUpdateManyArgs> = 
 
 export const CursoDeleteManyArgsSchema: z.ZodType<Prisma.CursoDeleteManyArgs> = z.object({
   where: CursoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const UsuarioCursoCreateArgsSchema: z.ZodType<Prisma.UsuarioCursoCreateArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  data: z.union([ UsuarioCursoCreateInputSchema,UsuarioCursoUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const UsuarioCursoUpsertArgsSchema: z.ZodType<Prisma.UsuarioCursoUpsertArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereUniqueInputSchema,
+  create: z.union([ UsuarioCursoCreateInputSchema,UsuarioCursoUncheckedCreateInputSchema ]),
+  update: z.union([ UsuarioCursoUpdateInputSchema,UsuarioCursoUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const UsuarioCursoCreateManyArgsSchema: z.ZodType<Prisma.UsuarioCursoCreateManyArgs> = z.object({
+  data: z.union([ UsuarioCursoCreateManyInputSchema,UsuarioCursoCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const UsuarioCursoDeleteArgsSchema: z.ZodType<Prisma.UsuarioCursoDeleteArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  where: UsuarioCursoWhereUniqueInputSchema,
+}).strict() ;
+
+export const UsuarioCursoUpdateArgsSchema: z.ZodType<Prisma.UsuarioCursoUpdateArgs> = z.object({
+  select: UsuarioCursoSelectSchema.optional(),
+  include: UsuarioCursoIncludeSchema.optional(),
+  data: z.union([ UsuarioCursoUpdateInputSchema,UsuarioCursoUncheckedUpdateInputSchema ]),
+  where: UsuarioCursoWhereUniqueInputSchema,
+}).strict() ;
+
+export const UsuarioCursoUpdateManyArgsSchema: z.ZodType<Prisma.UsuarioCursoUpdateManyArgs> = z.object({
+  data: z.union([ UsuarioCursoUpdateManyMutationInputSchema,UsuarioCursoUncheckedUpdateManyInputSchema ]),
+  where: UsuarioCursoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const UsuarioCursoDeleteManyArgsSchema: z.ZodType<Prisma.UsuarioCursoDeleteManyArgs> = z.object({
+  where: UsuarioCursoWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
