@@ -4,7 +4,8 @@ import {
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
-import { examenSchema, examenSchemaExample } from '../schemas/examen-schema.js'
+import { examenSchemaExample } from '../schemas/examen-schema.js'
+import { ExamenSchema } from 'prisma/generated/zod/index.js'
 
 export const getExamenesRoute = createRoute({
   method: 'get',
@@ -23,7 +24,7 @@ export const getExamenesRoute = createRoute({
       content: {
         'application/json': {
           schema: z
-            .array(examenSchema)
+            .array(ExamenSchema)
             .openapi({ example: [examenSchemaExample] }),
         },
       },

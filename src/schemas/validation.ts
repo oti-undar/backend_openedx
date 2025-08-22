@@ -194,7 +194,7 @@ export const fileSchema = z
       )
     },
     {
-      message: 'Archivo no válido o tipo no permitido',
+      message: `Archivo no válido o tipo no permitido`,
     }
   )
   .optional()

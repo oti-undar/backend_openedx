@@ -1,0 +1,72 @@
+model RubricaHolistica {
+    id      String @id @default(cuid())
+    name    String
+    user_id String
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    niveles_de_logro NivelesDeLogro[]
+    examenes         Examen[]
+
+    @@unique([name, user_id])
+}
+
+model RubricaAnalitica {
+    id      String @id @default(cuid())
+    name    String
+    user_id String
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    indicadores Indicadores[]
+    examenes    Examen[]
+
+    @@unique([name, user_id])
+}
+
+model Indicadores {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    rubrica_analitica_id String
+    rubrica_analitica    RubricaAnalitica @relation(fields: [rubrica_analitica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    preguntas        Pregunta[]
+    niveles_de_logro NivelesDeLogro[]
+
+    @@unique([name, rubrica_analitica_id])
+}
+
+enum TipoNivel {
+    Porcentaje @map("%")
+    Rango      @map("r")
+}
+
+model NivelesDeLogro {
+    id        Int       @id @default(autoincrement())
+    name      String
+    criterios String    @db.Text
+    tipo      TipoNivel
+    nota      String
+
+    rubrica_holistica_id String?
+    rubrica_holistica    RubricaHolistica? @relation(fields: [rubrica_holistica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    indicador_id Int?
+    indicador    Indicadores? @relation(fields: [indicador_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    @@unique([name, indicador_id])
+    @@unique([name, rubrica_holistica_id])
+}

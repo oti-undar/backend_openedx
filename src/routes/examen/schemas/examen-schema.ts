@@ -1,4 +1,4 @@
-import { z } from '@hono/zod-openapi'
+import { TipoExamen } from '@prisma/client'
 
 export const examenSchemaExample = {
   id: '123e4567-e89b-12d3-a456-426614174000',
@@ -10,65 +10,13 @@ export const examenSchemaExample = {
   peso: 1,
   user_id: '123e4567-e89b-12d3-a456-426614174000',
   curso_id: '123e4567-e89b-12d3-a456-426614174000',
-  inicio_examen: '2025-05-23T21:54:05.000Z',
-  final_examen: '2025-05-23T21:54:05.000Z',
+  inicio_examen: new Date(),
+  final_examen: new Date(),
+  tipo_examen: TipoExamen.Async,
   state_id: 1,
-  created_at: '2025-05-23T21:54:05.000Z',
-  updated_at: '2025-05-23T21:54:05.000Z',
-  deleted_at: '2025-05-23T21:54:05.000Z',
+  rubrica_holistica_id: null,
+  rubrica_analitica_id: null,
+  created_at: new Date(),
+  updated_at: new Date(),
+  deleted_at: new Date(),
 }
-
-export const examenSchema = z
-  .object({
-    id: z.string().uuid().openapi({
-      example: examenSchemaExample.user_id,
-    }),
-    title: z.string().openapi({
-      example: examenSchemaExample.title,
-    }),
-    description: z.string().optional().nullable().openapi({
-      example: examenSchemaExample.description,
-    }),
-    img: z.string().optional().nullable().openapi({
-      example: examenSchemaExample.img,
-    }),
-    video: z.string().optional().nullable().openapi({
-      example: examenSchemaExample.video,
-    }),
-    audio: z.string().optional().nullable().openapi({
-      example: examenSchemaExample.video,
-    }),
-    peso: z.number().int().default(1).openapi({
-      example: 1,
-    }),
-    user_id: z.string().openapi({
-      example: examenSchemaExample.user_id,
-    }),
-    curso_id: z.string().openapi({
-      example: examenSchemaExample.curso_id,
-    }),
-    inicio_examen: z.string().datetime().optional().nullable().openapi({
-      example: examenSchemaExample.inicio_examen,
-    }),
-    final_examen: z.string().datetime().optional().nullable().openapi({
-      example: examenSchemaExample.final_examen,
-    }),
-    state_id: z.number().int().openapi({
-      example: 1,
-    }),
-    created_at: z.string().datetime().openapi({
-      example: examenSchemaExample.created_at,
-    }),
-    updated_at: z.string().datetime().openapi({
-      example: examenSchemaExample.updated_at,
-    }),
-    deleted_at: z.string().datetime().optional().nullable().openapi({
-      example: examenSchemaExample.deleted_at,
-    }),
-  })
-  .openapi({
-    example: examenSchemaExample,
-  })
-  .openapi('Examen_Schema')
-
-export type examenSchemaProps = z.infer<typeof examenSchema>

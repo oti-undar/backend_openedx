@@ -4,9 +4,11 @@ import {
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
-import { examenSchema, examenSchemaExample } from '../schemas/examen-schema.js'
-import { ExamenWhereInputSchema } from 'prisma/generated/zod/index.js'
-import { HTTPException } from 'hono/http-exception'
+import { examenSchemaExample } from '../schemas/examen-schema.js'
+import {
+  ExamenSchema,
+  ExamenWhereInputSchema,
+} from 'prisma/generated/zod/index.js'
 import qs from 'qs'
 
 export type ExamenWhereInputSchemaProps = z.infer<typeof ExamenWhereInputSchema>
@@ -38,7 +40,15 @@ export const getExamenRoute = createRoute({
   description:
     'Obtener examen. Recibe como parámetros el ID del usuario (string) y el ID del examen (string).',
   request: {
-    query: getUserIdSchema,
+    query: getUserIdSchema.extend({
+      filters: z
+        .any()
+        .optional()
+        .openapi({
+          example: { state: { name: 'Activo' } },
+          description: 'Filtros para obtener examen',
+        }),
+    }),
     params: getExamenSchema,
   },
   middleware: async (c, next) => {
@@ -59,7 +69,7 @@ export const getExamenRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: examenSchema,
+          schema: ExamenSchema,
         },
       },
       description: 'Devuelve el examen',

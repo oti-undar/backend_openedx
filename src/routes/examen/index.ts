@@ -1,5 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { createExamenRoute } from './docs/doc-create-examen.js'
+import {
+  createExamenRoute,
+  type CreateExamenCompleteSchemaProps,
+} from './docs/doc-create-examen.js'
 import { createExamen } from './utils/create-examen.js'
 import { db } from '@/db/db.js'
 import { getExamenesRoute } from './docs/doc-get-examenes.js'
@@ -13,7 +16,7 @@ import { getExamen } from './utils/get-examen.js'
 const examen = new OpenAPIHono()
 
 examen.openapi(createExamenRoute, async c => {
-  const input = c.req.valid('json')
+  const input = c.get('formDataValidated') as CreateExamenCompleteSchemaProps
   try {
     const examen = await db.$transaction(async prisma => {
       return await createExamen({ item: input, prisma })

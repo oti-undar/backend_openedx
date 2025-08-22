@@ -4,15 +4,17 @@ import {
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
-import { examenSchema, examenSchemaExample } from '../schemas/examen-schema.js'
+import { examenSchemaExample } from '../schemas/examen-schema.js'
+import { preguntaSchemaExample } from '../schemas/pregunta-schema.js'
+import { respuestaSchemaExample } from '../schemas/respuesta-schema.js'
+import { parseFormDataToObject } from '@/helpers/parse-form-data.js'
 import {
-  preguntaSchema,
-  preguntaSchemaExample,
-} from '../schemas/pregunta-schema.js'
-import {
-  respuestaSchema,
-  respuestaSchemaExample,
-} from '../schemas/respuesta-schema.js'
+  ExamenSchema,
+  IndicadoresSchema,
+  PreguntaSchema,
+  RespuestaSchema,
+} from 'prisma/generated/zod/index.js'
+import { addOptionalToNullable } from '@/helpers/agregar-optional-schema.js'
 
 const {
   id,
@@ -22,6 +24,8 @@ const {
   img,
   video,
   audio,
+  state_id,
+  peso,
   ...examenExample
 } = examenSchemaExample
 const {
@@ -30,6 +34,7 @@ const {
   img: imgPregunta,
   video: videoPregunta,
   audio: audioPregunta,
+  puntos,
   ...preguntaExample
 } = preguntaSchemaExample
 const {
@@ -41,7 +46,7 @@ const {
   ...respuestaExample
 } = respuestaSchemaExample
 
-const createExamenSchema = examenSchema
+const createExamenSchema = addOptionalToNullable(ExamenSchema)
   .omit({
     id: true,
     created_at: true,
@@ -50,30 +55,64 @@ const createExamenSchema = examenSchema
     img: true,
     video: true,
     audio: true,
+    state_id: true,
+    peso: true,
   })
   .extend({
+    state_id: z
+      .string()
+      .transform(val => Number(val))
+      .refine(val => !isNaN(val), { message: 'state_id inválido' }),
+    peso: z
+      .string()
+      .default('1')
+      .transform(val => Number(val))
+      .refine(val => !isNaN(val), { message: 'peso inválido' }),
     archivo: fileSchema,
+    preguntas: z.any().openapi({
+      example: [
+        {
+          ...preguntaExample,
+          respuestas: [respuestaExample],
+        },
+      ],
+      description: 'Array de preguntas',
+    }),
+  })
+
+export type CreateExamenSchemaProps = z.infer<typeof createExamenSchema>
+
+const createExamenCompleteSchema = createExamenSchema
+  .extend({
     preguntas: z
       .array(
-        preguntaSchema
+        addOptionalToNullable(PreguntaSchema)
           .omit({
             id: true,
             examen_id: true,
             img: true,
             video: true,
             audio: true,
+            puntos: true,
           })
           .extend({
             archivo: fileSchema,
+            puntos: z
+              .string()
+              .default('1')
+              .transform(val => Number(val))
+              .refine(val => !isNaN(val), { message: 'puntos inválidos' }),
+            indicadores: z.array(z.coerce.number().int()).optional(),
             respuestas: z
               .array(
-                respuestaSchema
+                addOptionalToNullable(RespuestaSchema)
                   .omit({
                     id: true,
                     pregunta_id: true,
                     img: true,
                     video: true,
                     audio: true,
+                    correcta: true,
                   })
                   .extend({
                     archivo: fileSchema,
@@ -87,9 +126,12 @@ const createExamenSchema = examenSchema
   .openapi({
     example: {
       ...examenExample,
+      state_id: '1',
+      peso: '1',
       preguntas: [
         {
           ...preguntaExample,
+          puntos: '1',
           respuestas: [respuestaExample],
         },
       ],
@@ -97,7 +139,9 @@ const createExamenSchema = examenSchema
   })
   .openapi('Create_Examen_Schema')
 
-export type CreateExamenSchemaProps = z.infer<typeof createExamenSchema>
+export type CreateExamenCompleteSchemaProps = z.infer<
+  typeof createExamenCompleteSchema
+>
 
 export const createExamenRoute = createRoute({
   method: 'post',
@@ -109,12 +153,23 @@ export const createExamenRoute = createRoute({
   request: {
     body: {
       content: {
-        'application/json': {
+        'multipart/form-data': {
           schema: createExamenSchema,
         },
       },
       required: true,
     },
+  },
+  middleware: async (c, next) => {
+    const formData = await c.req.formData()
+    const parsedQuery = parseFormDataToObject(formData)
+
+    const result = createExamenCompleteSchema.safeParse(parsedQuery)
+
+    if (!result.success) return c.json(result, 400)
+
+    c.set('formDataValidated', result.data)
+    await next()
   },
   responses: {
     ...validateErrorResponse,
@@ -122,7 +177,7 @@ export const createExamenRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: examenSchema,
+          schema: ExamenSchema,
         },
       },
       description: 'Devuelve el examen creado',

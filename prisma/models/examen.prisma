@@ -1,3 +1,8 @@
+enum TipoExamen {
+    Sync
+    Async
+}
+
 model Examen {
     id          String  @id @default(uuid())
     title       String
@@ -13,6 +18,14 @@ model Examen {
     inicio_examen DateTime?
     final_examen  DateTime?
 
+    tipo_examen TipoExamen @default(Async)
+
+    rubrica_holistica_id String?
+    rubrica_holistica    RubricaHolistica? @relation(fields: [rubrica_holistica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    rubrica_analitica_id String?
+    rubrica_analitica    RubricaAnalitica? @relation(fields: [rubrica_analitica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
     state_id    Int
     state       State             @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
     preguntas   Pregunta[]
@@ -26,30 +39,32 @@ model Examen {
 }
 
 model Pregunta {
-    id                        Int                         @id @default(autoincrement())
-    title                     String
-    description               String?
-    img                       String?
-    video                     String?
-    audio                     String?
-    puntos                    Int                         @default(1) @db.TinyInt
-    duracion                  Decimal?                    @db.Decimal(6, 2)
-    inicio_pregunta           DateTime?
-    examen_id                 String
+    id              String    @id @default(uuid())
+    title           String
+    description     String?
+    img             String?
+    video           String?
+    audio           String?
+    puntos          Int       @default(1) @db.TinyInt
+    duracion        Decimal?  @db.Decimal(6, 2)
+    inicio_pregunta DateTime?
+    examen_id       String
+
+    indicadores               Indicadores[]
     examen                    Examen                      @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
     respuestas                Respuesta[]
     respuestasEjecucionExamen RespuestasEjecucionExamen[]
 }
 
 model Respuesta {
-    id        Int     @id @default(autoincrement())
+    id        String  @id @default(uuid())
     respuesta String
     img       String?
     video     String?
     audio     String?
     correcta  Boolean @default(false)
 
-    pregunta_id               Int
+    pregunta_id               String
     pregunta                  Pregunta                    @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
     respuestasEjecucionExamen RespuestasEjecucionExamen[]
 }

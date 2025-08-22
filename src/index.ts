@@ -5,6 +5,8 @@ import examen from './routes/examen/index.js'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { cors } from 'hono/cors'
 import curso from './routes/curso/index.js'
+import state from './routes/state/index.js'
+import rubrica from './routes/rubrica/index.js'
 
 const app = new OpenAPIHono()
 app.use('*', cors())
@@ -14,7 +16,9 @@ app.get('/', c => {
 })
 
 app.route('/examen', examen)
+app.route('/rubrica', rubrica)
 app.route('/curso', curso)
+app.route('/state', state)
 
 app.get('/ui', c => c.html(docUi['Stoplight Elements']))
 app.doc('/doc', openapiInfo)
