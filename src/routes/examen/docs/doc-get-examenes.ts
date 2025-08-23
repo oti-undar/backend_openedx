@@ -5,7 +5,7 @@ import {
   validateErrorResponse,
 } from '@/schemas/validation.js'
 import { examenSchemaExample } from '../schemas/examen-schema.js'
-import { ExamenSchema } from 'prisma/generated/zod/index.js'
+import { ExamenSchema } from '@/db/generated/zod/index.js'
 
 export const getExamenesRoute = createRoute({
   method: 'get',

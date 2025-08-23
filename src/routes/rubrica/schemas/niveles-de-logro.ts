@@ -2,7 +2,7 @@ import { TipoNivel } from '@prisma/client'
 import {
   NivelesDeLogroCreateInputSchema,
   NivelesDeLogroSchema,
-} from 'prisma/generated/zod/index.js'
+} from '@/db/generated/zod/index.js'
 
 export const nivelesDeLogroSchemaExample = {
   id: 1,

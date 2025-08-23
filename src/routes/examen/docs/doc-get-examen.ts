@@ -8,7 +8,7 @@ import { examenSchemaExample } from '../schemas/examen-schema.js'
 import {
   ExamenSchema,
   ExamenWhereInputSchema,
-} from 'prisma/generated/zod/index.js'
+} from '@/db/generated/zod/index.js'
 import qs from 'qs'
 
 export type ExamenWhereInputSchemaProps = z.infer<typeof ExamenWhereInputSchema>

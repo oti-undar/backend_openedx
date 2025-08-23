@@ -10,10 +10,9 @@ import { respuestaSchemaExample } from '../schemas/respuesta-schema.js'
 import { parseFormDataToObject } from '@/helpers/parse-form-data.js'
 import {
   ExamenSchema,
-  IndicadoresSchema,
   PreguntaSchema,
   RespuestaSchema,
-} from 'prisma/generated/zod/index.js'
+} from '@/db/generated/zod/index.js'
 import { addOptionalToNullable } from '@/helpers/agregar-optional-schema.js'
 
 const {

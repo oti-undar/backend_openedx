@@ -1,7 +1,7 @@
 import {
   IndicadoresCreateInputSchema,
   IndicadoresSchema,
-} from 'prisma/generated/zod/index.js'
+} from '@/db/generated/zod/index.js'
 
 export const indicadoresSchemaExample = {
   id: 1,

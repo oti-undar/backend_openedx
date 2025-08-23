@@ -3,7 +3,7 @@ import {
   RubricaAnaliticaSchema,
   RubricaHolisticaCreateInputSchema,
   RubricaHolisticaSchema,
-} from 'prisma/generated/zod/index.js'
+} from '@/db/generated/zod/index.js'
 
 export const rubricaHolisticaSchemaExample = {
   id: 'cme9bssf00013356l6t6g005h',
