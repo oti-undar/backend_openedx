@@ -10,18 +10,17 @@ export async function getExamen({
   prisma,
   incluirCorrecta = false,
 }: {
-  item: getUserIdSchemaProps & {
+  item: {
     filters?: ExamenWhereInputSchemaProps
   } & getExamenSchemaProps
   prisma: dbTransaction
   incluirCorrecta?: boolean
 }) {
-  const { filters, examen_id: id, user_id } = item
+  const { filters, examen_id: id } = item
   const examen = await prisma.examen.findUniqueOrThrow({
     where: {
       ...filters,
       id,
-      user_id,
     },
     include: {
       curso: true,

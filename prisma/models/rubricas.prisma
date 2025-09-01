@@ -1,7 +1,9 @@
 model RubricaHolistica {
-    id      String @id @default(cuid())
-    name    String
-    user_id String
+    id   String @id @default(cuid())
+    name String
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
@@ -14,9 +16,11 @@ model RubricaHolistica {
 }
 
 model RubricaAnalitica {
-    id      String @id @default(cuid())
-    name    String
-    user_id String
+    id   String @id @default(cuid())
+    name String
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt

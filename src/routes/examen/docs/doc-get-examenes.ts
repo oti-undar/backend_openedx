@@ -4,8 +4,18 @@ import {
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
-import { examenSchemaExample } from '../schemas/examen-schema.js'
-import { ExamenSchema } from '@/db/generated/zod/index.js'
+
+const getExamenesSchema = z.array(
+  z.object({
+    title: z.string(),
+    id: z.string(),
+    preguntas: z.array(
+      z.object({
+        id: z.string(),
+      })
+    ),
+  })
+)
 
 export const getExamenesRoute = createRoute({
   method: 'get',
@@ -23,9 +33,7 @@ export const getExamenesRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: z
-            .array(ExamenSchema)
-            .openapi({ example: [examenSchemaExample] }),
+          schema: getExamenesSchema,
         },
       },
       description: 'Devuelve los examenes del usuario',

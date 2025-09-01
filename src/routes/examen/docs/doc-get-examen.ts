@@ -1,6 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import {
-  getUserIdSchema,
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
@@ -26,8 +25,8 @@ const getExamenSchema = z
 
 export type getExamenSchemaProps = z.infer<typeof getExamenSchema>
 
-const queryCompleteSchema = getUserIdSchema.extend({
-  filters: ExamenWhereInputSchema,
+const queryCompleteSchema = z.object({
+  filters: ExamenWhereInputSchema.optional(),
 })
 
 export type queryCompleteSchemaProps = z.infer<typeof queryCompleteSchema>
@@ -40,7 +39,7 @@ export const getExamenRoute = createRoute({
   description:
     'Obtener examen. Recibe como parámetros el ID del usuario (string) y el ID del examen (string).',
   request: {
-    query: getUserIdSchema.extend({
+    query: z.object({
       filters: z
         .any()
         .optional()

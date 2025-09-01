@@ -1,26 +1,46 @@
 model EjecucionExamen {
-    id           String                      @id @default(uuid())
-    alumno_id    String
-    examen_id    String
-    examen       Examen                      @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    respuestas   RespuestasEjecucionExamen[]
-    final_examen DateTime?
+    id String @id @default(uuid())
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    examen_id String
+    examen    Examen @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    pregunta_ejecucion_actual_id String?                   @unique
+    pregunta_ejecucion_actual    PreguntasEjecucionExamen? @relation("pregunta_ejecucion_actual", fields: [pregunta_ejecucion_actual_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    fin_examen DateTime?
+
+    preguntas_resueltas PreguntasEjecucionExamen[] @relation("preguntas_resueltas")
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
+
+    @@unique([user_id, examen_id])
 }
 
-model RespuestasEjecucionExamen {
-    id                  String          @id @default(uuid())
+model PreguntasEjecucionExamen {
+    id String @id @default(uuid())
+
     ejecucion_examen_id String
-    pregunta_id         String
-    respuesta_id        String
-    ejecucion_examen    EjecucionExamen @relation(fields: [ejecucion_examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    pregunta            Pregunta        @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    respuesta           Respuesta       @relation(fields: [respuesta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ejecucion_examen    EjecucionExamen @relation("preguntas_resueltas", fields: [ejecucion_examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    pregunta_id String
+    pregunta    Pregunta @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    respuesta_id String?
+    respuesta    Respuesta? @relation(fields: [respuesta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    inicio DateTime?
+    final  DateTime?
+
+    ejecucion_actual_de EjecucionExamen? @relation("pregunta_ejecucion_actual")
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
+
+    @@unique([pregunta_id, ejecucion_examen_id])
 }

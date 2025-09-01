@@ -12,6 +12,8 @@ import {
   type queryCompleteSchemaProps,
 } from './docs/doc-get-examen.js'
 import { getExamen } from './utils/get-examen.js'
+import { updateExamenRoute } from './docs/doc-update-examen.js'
+import { updateExamen } from './utils/update-examen.js'
 
 const examen = new OpenAPIHono()
 
@@ -51,6 +53,20 @@ examen.openapi(getExamenRoute, async c => {
         prisma,
         incluirCorrecta: true,
       })
+    })
+    return c.json(examen, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
+
+examen.openapi(updateExamenRoute, async c => {
+  const { id } = c.req.valid('param')
+  const input = c.req.valid('json')
+  try {
+    const examen = await db.$transaction(async prisma => {
+      return await updateExamen({ item: input, examen_id: id, prisma })
     })
     return c.json(examen, 200)
   } catch (error) {

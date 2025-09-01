@@ -56,8 +56,13 @@ const createExamenSchema = addOptionalToNullable(ExamenSchema)
     audio: true,
     state_id: true,
     peso: true,
+    user_id: true,
   })
   .extend({
+    user_id: z
+      .string()
+      .transform(val => Number(val))
+      .refine(val => !isNaN(val), { message: 'user_id inválido' }),
     state_id: z
       .string()
       .transform(val => Number(val))

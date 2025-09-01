@@ -14,21 +14,24 @@ export async function getExamenes({
     where: {
       user_id: item.user_id,
     },
-    include: {
-      curso: true,
-      state: true,
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      curso: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       preguntas: {
-        include: {
-          respuestas: {
-            select: {
-              id: true,
-              respuesta: true,
-              img: true,
-              video: true,
-              audio: true,
-              correcta: incluirCorrecta,
-            },
-          },
+        select: {
+          id: true,
+        },
+      },
+      state: {
+        select: {
+          name: true,
         },
       },
     },

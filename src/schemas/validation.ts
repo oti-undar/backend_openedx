@@ -156,13 +156,11 @@ export const otherErrorResponse = {
 
 export const getUserIdSchema = z
   .object({
-    user_id: z
-      .string()
-      .openapi({ example: '123e4567-e89b-12d3-a456-426614174000' }),
+    user_id: z.coerce.number().openapi({ example: 4 }),
   })
   .openapi({
     example: {
-      user_id: '123e4567-e89b-12d3-a456-426614174000',
+      user_id: 4,
     },
   })
   .openapi('Get_UserId_Schema')

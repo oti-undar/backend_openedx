@@ -4,15 +4,13 @@ import {
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
-import { getCursosSchema } from '../schemas/curso-schema.js'
 
-export const getCursosRoute = createRoute({
+export const isInstructorRoute = createRoute({
   method: 'get',
-  path: '/',
+  path: '/is-instructor',
   tags: ['Curso'],
-  summary: 'Obtener cursos',
-  description:
-    'Obtener cursos. Recibe como parámetro el ID del usuario (string).',
+  summary: 'Verificar si es instructor',
+  description: 'Verificar si es instructor con OpenEDX.',
   request: {
     query: getUserIdSchema,
   },
@@ -22,10 +20,12 @@ export const getCursosRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: getCursosSchema,
+          schema: z.object({
+            is_instructor: z.boolean(),
+          }),
         },
       },
-      description: 'Devuelve los cursos del usuario',
+      description: 'Devuelve true si es instructor',
     },
   },
 })

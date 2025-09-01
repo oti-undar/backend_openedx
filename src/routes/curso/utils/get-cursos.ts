@@ -16,6 +16,16 @@ export async function getCursos({
         },
       },
     },
+    select: {
+      id: true,
+      name: true,
+      usuarios: {
+        select: {
+          user_id: true,
+          is_instructor: true,
+        },
+      },
+    },
   })
   return cursos
 }

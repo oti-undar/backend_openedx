@@ -1,15 +1,15 @@
 import { TipoExamen } from '@prisma/client'
 
 export const examenSchemaExample = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
+  id: '620e4567-e89b-12d3-a456-426614174000',
   title: 'Examen de prueba',
   description: 'Descripción del examen',
   img: 'https://example.com/img.jpg',
   video: 'https://example.com/video.mp4',
   audio: 'https://example.com/audio.mp3',
   peso: 1,
-  user_id: '123e4567-e89b-12d3-a456-426614174000',
-  curso_id: '123e4567-e89b-12d3-a456-426614174000',
+  user_id: '4',
+  curso_id: '620e4567-e89b-12d3-a456-426614174000',
   inicio_examen: new Date(),
   final_examen: new Date(),
   tipo_examen: TipoExamen.Async,

@@ -5,7 +5,7 @@ export async function createRubricaHolistica({
   item,
   prisma,
 }: {
-  item: Prisma.RubricaHolisticaCreateInput
+  item: Prisma.RubricaHolisticaUncheckedCreateInput
   prisma: dbTransaction
 }) {
   const itemCreated = await prisma.rubricaHolistica.create({
@@ -19,7 +19,7 @@ export async function createRubricaAnalitica({
   item,
   prisma,
 }: {
-  item: Prisma.RubricaAnaliticaCreateInput
+  item: Prisma.RubricaAnaliticaUncheckedCreateInput
   prisma: dbTransaction
 }) {
   const itemCreated = await prisma.rubricaAnalitica.create({

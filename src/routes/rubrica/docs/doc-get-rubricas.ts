@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import {
+  getUserIdSchema,
   otherErrorResponse,
   validateErrorResponse,
 } from '@/schemas/validation.js'
@@ -8,9 +9,7 @@ import {
   rubricaHolisticaSchema,
 } from '../schemas/rubrica-schema.js'
 
-const getRubricasHolisticaSchema = z.object({
-  user_id: z.string(),
-})
+const getRubricasHolisticaSchema = getUserIdSchema
 
 export type GetRubricasHolisticaSchemaProps = z.infer<
   typeof getRubricasHolisticaSchema
@@ -39,9 +38,7 @@ export const getRubricasHolisticaRoute = createRoute({
   },
 })
 
-const getRubricasAnaliticaSchema = z.object({
-  user_id: z.string(),
-})
+const getRubricasAnaliticaSchema = getUserIdSchema
 
 export type GetRubricasAnaliticaSchemaProps = z.infer<
   typeof getRubricasAnaliticaSchema

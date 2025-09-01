@@ -1,5 +1,5 @@
 model Curso {
-    id   String @id @default(uuid())
+    id   String @id
     name String
 
     examenes Examen[]
@@ -11,13 +11,19 @@ model Curso {
 }
 
 model UsuarioCurso {
-    id       Int    @id @default(autoincrement())
-    user_id  String
-    curso_id String
+    id Int @id @default(autoincrement())
 
-    curso Curso @relation(fields: [curso_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    curso_id String
+    curso    Curso  @relation(fields: [curso_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    is_instructor Boolean @default(false)
 
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
+
+    @@unique([user_id, curso_id])
 }
