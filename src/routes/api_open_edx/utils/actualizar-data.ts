@@ -60,19 +60,21 @@ export async function actualizarData({ item }: { item: getUserIdSchemaProps }) {
     
     FROM student_courseaccessrole ar
     JOIN student_courseenrollment e 
-    ON e.course_id = ar.course_id
+      ON e.course_id = ar.course_id
     JOIN course_overviews_courseoverview c 
-    ON c.id = e.course_id
+      ON c.id = e.course_id
     JOIN auth_user u
-    ON u.id = e.user_id
+      ON u.id = e.user_id
+    JOIN auth_user iu
+      ON iu.id = ar.user_id
     LEFT JOIN student_courseaccessrole ar2 
-    ON ar2.user_id = e.user_id 
-    AND ar2.course_id = e.course_id
+      ON ar2.user_id = e.user_id 
+      AND ar2.course_id = e.course_id
     WHERE ar.user_id = ${userId}
-    AND ar.role IN ('instructor', 'staff')
-    AND ar2.user_id IS NULL
-    AND c.display_name IS NOT NULL
-    AND c.display_name <> '';
+      AND ar.role IN ('instructor', 'staff')
+      AND ar2.user_id IS NULL
+      AND c.display_name IS NOT NULL
+      AND c.display_name <> '';
     `
 
   const result = Object.values(
