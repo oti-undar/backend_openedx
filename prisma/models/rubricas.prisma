@@ -49,16 +49,10 @@ model Indicadores {
     @@unique([name, rubrica_analitica_id])
 }
 
-enum TipoNivel {
-    Porcentaje @map("%")
-    Rango      @map("r")
-}
-
 model NivelesDeLogro {
-    id        Int       @id @default(autoincrement())
+    id        Int    @id @default(autoincrement())
     name      String
-    criterios String    @db.Text
-    tipo      TipoNivel
+    criterios String @db.Text
     nota      String
 
     rubrica_holistica_id String?

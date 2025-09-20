@@ -41,7 +41,7 @@ export const EjecucionExamenScalarFieldEnumSchema = z.enum(['id','user_id','exam
 
 export const PreguntasEjecucionExamenScalarFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id','inicio','final','created_at','updated_at','deleted_at']);
 
-export const ExamenScalarFieldEnumSchema = z.enum(['id','title','description','img','video','audio','peso','user_id','curso_id','inicio_examen','final_examen','tipo_examen','rubrica_holistica_id','rubrica_analitica_id','state_id','created_at','updated_at','deleted_at']);
+export const ExamenScalarFieldEnumSchema = z.enum(['id','title','description','img','video','audio','peso','user_id','curso_id','inicio_examen','final_examen','tipo_examen','rubrica_holistica_id','rubrica_analitica_id','state_id','pregunta_actual_sync_id','created_at','updated_at','deleted_at']);
 
 export const PreguntaScalarFieldEnumSchema = z.enum(['id','title','description','img','video','audio','puntos','duracion','examen_id']);
 
@@ -55,7 +55,7 @@ export const RubricaAnaliticaScalarFieldEnumSchema = z.enum(['id','name','user_i
 
 export const IndicadoresScalarFieldEnumSchema = z.enum(['id','name','rubrica_analitica_id','created_at','updated_at','deleted_at']);
 
-export const NivelesDeLogroScalarFieldEnumSchema = z.enum(['id','name','criterios','tipo','nota','rubrica_holistica_id','indicador_id','created_at','updated_at','deleted_at']);
+export const NivelesDeLogroScalarFieldEnumSchema = z.enum(['id','name','criterios','nota','rubrica_holistica_id','indicador_id','created_at','updated_at','deleted_at']);
 
 export const StateScalarFieldEnumSchema = z.enum(['id','name']);
 
@@ -73,7 +73,7 @@ export const EjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','exam
 
 export const PreguntasEjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id']);
 
-export const ExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','title','description','img','video','audio','curso_id','rubrica_holistica_id','rubrica_analitica_id']);
+export const ExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','title','description','img','video','audio','curso_id','rubrica_holistica_id','rubrica_analitica_id','pregunta_actual_sync_id']);
 
 export const PreguntaOrderByRelevanceFieldEnumSchema = z.enum(['id','title','description','img','video','audio','examen_id']);
 
@@ -94,10 +94,6 @@ export const UserOrderByRelevanceFieldEnumSchema = z.enum(['username','first_nam
 export const TipoExamenSchema = z.enum(['Sync','Async']);
 
 export type TipoExamenType = `${z.infer<typeof TipoExamenSchema>}`
-
-export const TipoNivelSchema = z.enum(['Porcentaje','Rango']);
-
-export type TipoNivelType = `${z.infer<typeof TipoNivelSchema>}`
 
 export const StateTypeSchema = z.enum(['Activo','Inconcluso','Disponible','Suspendido','Inactivo','Finalizado']);
 
@@ -192,6 +188,7 @@ export const ExamenSchema = z.object({
   rubrica_holistica_id: z.string().nullable(),
   rubrica_analitica_id: z.string().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().nullable(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
   deleted_at: z.coerce.date().nullable(),
@@ -299,7 +296,6 @@ export type Indicadores = z.infer<typeof IndicadoresSchema>
 /////////////////////////////////////////
 
 export const NivelesDeLogroSchema = z.object({
-  tipo: TipoNivelSchema,
   id: z.number().int(),
   name: z.string(),
   criterios: z.string(),
@@ -487,6 +483,7 @@ export const ExamenIncludeSchema: z.ZodType<Prisma.ExamenInclude> = z.object({
   rubrica_holistica: z.union([z.boolean(),z.lazy(() => RubricaHolisticaArgsSchema)]).optional(),
   rubrica_analitica: z.union([z.boolean(),z.lazy(() => RubricaAnaliticaArgsSchema)]).optional(),
   state: z.union([z.boolean(),z.lazy(() => StateArgsSchema)]).optional(),
+  pregunta_actual_sync: z.union([z.boolean(),z.lazy(() => PreguntaArgsSchema)]).optional(),
   preguntas: z.union([z.boolean(),z.lazy(() => PreguntaFindManyArgsSchema)]).optional(),
   historial: z.union([z.boolean(),z.lazy(() => HistorialFindManyArgsSchema)]).optional(),
   ejecuciones: z.union([z.boolean(),z.lazy(() => EjecucionExamenFindManyArgsSchema)]).optional(),
@@ -524,6 +521,7 @@ export const ExamenSelectSchema: z.ZodType<Prisma.ExamenSelect> = z.object({
   rubrica_holistica_id: z.boolean().optional(),
   rubrica_analitica_id: z.boolean().optional(),
   state_id: z.boolean().optional(),
+  pregunta_actual_sync_id: z.boolean().optional(),
   created_at: z.boolean().optional(),
   updated_at: z.boolean().optional(),
   deleted_at: z.boolean().optional(),
@@ -532,6 +530,7 @@ export const ExamenSelectSchema: z.ZodType<Prisma.ExamenSelect> = z.object({
   rubrica_holistica: z.union([z.boolean(),z.lazy(() => RubricaHolisticaArgsSchema)]).optional(),
   rubrica_analitica: z.union([z.boolean(),z.lazy(() => RubricaAnaliticaArgsSchema)]).optional(),
   state: z.union([z.boolean(),z.lazy(() => StateArgsSchema)]).optional(),
+  pregunta_actual_sync: z.union([z.boolean(),z.lazy(() => PreguntaArgsSchema)]).optional(),
   preguntas: z.union([z.boolean(),z.lazy(() => PreguntaFindManyArgsSchema)]).optional(),
   historial: z.union([z.boolean(),z.lazy(() => HistorialFindManyArgsSchema)]).optional(),
   ejecuciones: z.union([z.boolean(),z.lazy(() => EjecucionExamenFindManyArgsSchema)]).optional(),
@@ -544,6 +543,7 @@ export const ExamenSelectSchema: z.ZodType<Prisma.ExamenSelect> = z.object({
 export const PreguntaIncludeSchema: z.ZodType<Prisma.PreguntaInclude> = z.object({
   indicadores: z.union([z.boolean(),z.lazy(() => IndicadoresFindManyArgsSchema)]).optional(),
   examen: z.union([z.boolean(),z.lazy(() => ExamenArgsSchema)]).optional(),
+  examen_con_pregunta_actual_sync: z.union([z.boolean(),z.lazy(() => ExamenArgsSchema)]).optional(),
   respuestas: z.union([z.boolean(),z.lazy(() => RespuestaFindManyArgsSchema)]).optional(),
   preguntasEjecucionExamen: z.union([z.boolean(),z.lazy(() => PreguntasEjecucionExamenFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PreguntaCountOutputTypeArgsSchema)]).optional(),
@@ -576,6 +576,7 @@ export const PreguntaSelectSchema: z.ZodType<Prisma.PreguntaSelect> = z.object({
   examen_id: z.boolean().optional(),
   indicadores: z.union([z.boolean(),z.lazy(() => IndicadoresFindManyArgsSchema)]).optional(),
   examen: z.union([z.boolean(),z.lazy(() => ExamenArgsSchema)]).optional(),
+  examen_con_pregunta_actual_sync: z.union([z.boolean(),z.lazy(() => ExamenArgsSchema)]).optional(),
   respuestas: z.union([z.boolean(),z.lazy(() => RespuestaFindManyArgsSchema)]).optional(),
   preguntasEjecucionExamen: z.union([z.boolean(),z.lazy(() => PreguntasEjecucionExamenFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => PreguntaCountOutputTypeArgsSchema)]).optional(),
@@ -769,7 +770,6 @@ export const NivelesDeLogroSelectSchema: z.ZodType<Prisma.NivelesDeLogroSelect> 
   id: z.boolean().optional(),
   name: z.boolean().optional(),
   criterios: z.boolean().optional(),
-  tipo: z.boolean().optional(),
   nota: z.boolean().optional(),
   rubrica_holistica_id: z.boolean().optional(),
   indicador_id: z.boolean().optional(),
@@ -1239,6 +1239,7 @@ export const ExamenWhereInputSchema: z.ZodType<Prisma.ExamenWhereInput> = z.obje
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   state_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1247,6 +1248,7 @@ export const ExamenWhereInputSchema: z.ZodType<Prisma.ExamenWhereInput> = z.obje
   rubrica_holistica: z.union([ z.lazy(() => RubricaHolisticaNullableScalarRelationFilterSchema),z.lazy(() => RubricaHolisticaWhereInputSchema) ]).optional().nullable(),
   rubrica_analitica: z.union([ z.lazy(() => RubricaAnaliticaNullableScalarRelationFilterSchema),z.lazy(() => RubricaAnaliticaWhereInputSchema) ]).optional().nullable(),
   state: z.union([ z.lazy(() => StateScalarRelationFilterSchema),z.lazy(() => StateWhereInputSchema) ]).optional(),
+  pregunta_actual_sync: z.union([ z.lazy(() => PreguntaNullableScalarRelationFilterSchema),z.lazy(() => PreguntaWhereInputSchema) ]).optional().nullable(),
   preguntas: z.lazy(() => PreguntaListRelationFilterSchema).optional(),
   historial: z.lazy(() => HistorialListRelationFilterSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenListRelationFilterSchema).optional()
@@ -1268,6 +1270,7 @@ export const ExamenOrderByWithRelationInputSchema: z.ZodType<Prisma.ExamenOrderB
   rubrica_holistica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   rubrica_analitica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   state_id: z.lazy(() => SortOrderSchema).optional(),
+  pregunta_actual_sync_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1276,17 +1279,28 @@ export const ExamenOrderByWithRelationInputSchema: z.ZodType<Prisma.ExamenOrderB
   rubrica_holistica: z.lazy(() => RubricaHolisticaOrderByWithRelationInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaOrderByWithRelationInputSchema).optional(),
   state: z.lazy(() => StateOrderByWithRelationInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaOrderByWithRelationInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaOrderByRelationAggregateInputSchema).optional(),
   historial: z.lazy(() => HistorialOrderByRelationAggregateInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenOrderByRelationAggregateInputSchema).optional(),
   _relevance: z.lazy(() => ExamenOrderByRelevanceInputSchema).optional()
 }).strict();
 
-export const ExamenWhereUniqueInputSchema: z.ZodType<Prisma.ExamenWhereUniqueInput> = z.object({
-  id: z.string().uuid()
-})
+export const ExamenWhereUniqueInputSchema: z.ZodType<Prisma.ExamenWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string().uuid(),
+    pregunta_actual_sync_id: z.string()
+  }),
+  z.object({
+    id: z.string().uuid(),
+  }),
+  z.object({
+    pregunta_actual_sync_id: z.string(),
+  }),
+])
 .and(z.object({
   id: z.string().uuid().optional(),
+  pregunta_actual_sync_id: z.string().optional(),
   AND: z.union([ z.lazy(() => ExamenWhereInputSchema),z.lazy(() => ExamenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => ExamenWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ExamenWhereInputSchema),z.lazy(() => ExamenWhereInputSchema).array() ]).optional(),
@@ -1312,6 +1326,7 @@ export const ExamenWhereUniqueInputSchema: z.ZodType<Prisma.ExamenWhereUniqueInp
   rubrica_holistica: z.union([ z.lazy(() => RubricaHolisticaNullableScalarRelationFilterSchema),z.lazy(() => RubricaHolisticaWhereInputSchema) ]).optional().nullable(),
   rubrica_analitica: z.union([ z.lazy(() => RubricaAnaliticaNullableScalarRelationFilterSchema),z.lazy(() => RubricaAnaliticaWhereInputSchema) ]).optional().nullable(),
   state: z.union([ z.lazy(() => StateScalarRelationFilterSchema),z.lazy(() => StateWhereInputSchema) ]).optional(),
+  pregunta_actual_sync: z.union([ z.lazy(() => PreguntaNullableScalarRelationFilterSchema),z.lazy(() => PreguntaWhereInputSchema) ]).optional().nullable(),
   preguntas: z.lazy(() => PreguntaListRelationFilterSchema).optional(),
   historial: z.lazy(() => HistorialListRelationFilterSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenListRelationFilterSchema).optional()
@@ -1333,6 +1348,7 @@ export const ExamenOrderByWithAggregationInputSchema: z.ZodType<Prisma.ExamenOrd
   rubrica_holistica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   rubrica_analitica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   state_id: z.lazy(() => SortOrderSchema).optional(),
+  pregunta_actual_sync_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1362,6 +1378,7 @@ export const ExamenScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Examen
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   state_id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1382,6 +1399,7 @@ export const PreguntaWhereInputSchema: z.ZodType<Prisma.PreguntaWhereInput> = z.
   examen_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   indicadores: z.lazy(() => IndicadoresListRelationFilterSchema).optional(),
   examen: z.union([ z.lazy(() => ExamenScalarRelationFilterSchema),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  examen_con_pregunta_actual_sync: z.union([ z.lazy(() => ExamenNullableScalarRelationFilterSchema),z.lazy(() => ExamenWhereInputSchema) ]).optional().nullable(),
   respuestas: z.lazy(() => RespuestaListRelationFilterSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenListRelationFilterSchema).optional()
 }).strict();
@@ -1398,6 +1416,7 @@ export const PreguntaOrderByWithRelationInputSchema: z.ZodType<Prisma.PreguntaOr
   examen_id: z.lazy(() => SortOrderSchema).optional(),
   indicadores: z.lazy(() => IndicadoresOrderByRelationAggregateInputSchema).optional(),
   examen: z.lazy(() => ExamenOrderByWithRelationInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenOrderByWithRelationInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaOrderByRelationAggregateInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenOrderByRelationAggregateInputSchema).optional(),
   _relevance: z.lazy(() => PreguntaOrderByRelevanceInputSchema).optional()
@@ -1421,6 +1440,7 @@ export const PreguntaWhereUniqueInputSchema: z.ZodType<Prisma.PreguntaWhereUniqu
   examen_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   indicadores: z.lazy(() => IndicadoresListRelationFilterSchema).optional(),
   examen: z.union([ z.lazy(() => ExamenScalarRelationFilterSchema),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  examen_con_pregunta_actual_sync: z.union([ z.lazy(() => ExamenNullableScalarRelationFilterSchema),z.lazy(() => ExamenWhereInputSchema) ]).optional().nullable(),
   respuestas: z.lazy(() => RespuestaListRelationFilterSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenListRelationFilterSchema).optional()
 }).strict());
@@ -1856,7 +1876,6 @@ export const NivelesDeLogroWhereInputSchema: z.ZodType<Prisma.NivelesDeLogroWher
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   criterios: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  tipo: z.union([ z.lazy(() => EnumTipoNivelFilterSchema),z.lazy(() => TipoNivelSchema) ]).optional(),
   nota: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   indicador_id: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -1871,7 +1890,6 @@ export const NivelesDeLogroOrderByWithRelationInputSchema: z.ZodType<Prisma.Nive
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   criterios: z.lazy(() => SortOrderSchema).optional(),
-  tipo: z.lazy(() => SortOrderSchema).optional(),
   nota: z.lazy(() => SortOrderSchema).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   indicador_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1920,7 +1938,6 @@ export const NivelesDeLogroWhereUniqueInputSchema: z.ZodType<Prisma.NivelesDeLog
   NOT: z.union([ z.lazy(() => NivelesDeLogroWhereInputSchema),z.lazy(() => NivelesDeLogroWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   criterios: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  tipo: z.union([ z.lazy(() => EnumTipoNivelFilterSchema),z.lazy(() => TipoNivelSchema) ]).optional(),
   nota: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   indicador_id: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
@@ -1935,7 +1952,6 @@ export const NivelesDeLogroOrderByWithAggregationInputSchema: z.ZodType<Prisma.N
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   criterios: z.lazy(() => SortOrderSchema).optional(),
-  tipo: z.lazy(() => SortOrderSchema).optional(),
   nota: z.lazy(() => SortOrderSchema).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   indicador_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1956,7 +1972,6 @@ export const NivelesDeLogroScalarWhereWithAggregatesInputSchema: z.ZodType<Prism
   id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   criterios: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  tipo: z.union([ z.lazy(() => EnumTipoNivelWithAggregatesFilterSchema),z.lazy(() => TipoNivelSchema) ]).optional(),
   nota: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   indicador_id: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
@@ -2436,6 +2451,7 @@ export const ExamenCreateInputSchema: z.ZodType<Prisma.ExamenCreateInput> = z.ob
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -2457,6 +2473,7 @@ export const ExamenUncheckedCreateInputSchema: z.ZodType<Prisma.ExamenUncheckedC
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -2484,6 +2501,7 @@ export const ExamenUpdateInputSchema: z.ZodType<Prisma.ExamenUpdateInput> = z.ob
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -2505,6 +2523,7 @@ export const ExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.ExamenUncheckedU
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2529,6 +2548,7 @@ export const ExamenCreateManyInputSchema: z.ZodType<Prisma.ExamenCreateManyInput
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -2566,6 +2586,7 @@ export const ExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ExamenUnchec
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2582,6 +2603,7 @@ export const PreguntaCreateInputSchema: z.ZodType<Prisma.PreguntaCreateInput> = 
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresCreateNestedManyWithoutPreguntasInputSchema).optional(),
   examen: z.lazy(() => ExamenCreateNestedOneWithoutPreguntasInputSchema),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -2597,6 +2619,7 @@ export const PreguntaUncheckedCreateInputSchema: z.ZodType<Prisma.PreguntaUnchec
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   examen_id: z.string(),
   indicadores: z.lazy(() => IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -2612,6 +2635,7 @@ export const PreguntaUpdateInputSchema: z.ZodType<Prisma.PreguntaUpdateInput> = 
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUpdateManyWithoutPreguntasNestedInputSchema).optional(),
   examen: z.lazy(() => ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -2627,6 +2651,7 @@ export const PreguntaUncheckedUpdateInputSchema: z.ZodType<Prisma.PreguntaUnchec
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   indicadores: z.lazy(() => IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -3017,7 +3042,6 @@ export const IndicadoresUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Indicad
 export const NivelesDeLogroCreateInputSchema: z.ZodType<Prisma.NivelesDeLogroCreateInput> = z.object({
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -3030,7 +3054,6 @@ export const NivelesDeLogroUncheckedCreateInputSchema: z.ZodType<Prisma.NivelesD
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   rubrica_holistica_id: z.string().optional().nullable(),
   indicador_id: z.number().int().optional().nullable(),
@@ -3042,7 +3065,6 @@ export const NivelesDeLogroUncheckedCreateInputSchema: z.ZodType<Prisma.NivelesD
 export const NivelesDeLogroUpdateInputSchema: z.ZodType<Prisma.NivelesDeLogroUpdateInput> = z.object({
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3055,7 +3077,6 @@ export const NivelesDeLogroUncheckedUpdateInputSchema: z.ZodType<Prisma.NivelesD
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicador_id: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3068,7 +3089,6 @@ export const NivelesDeLogroCreateManyInputSchema: z.ZodType<Prisma.NivelesDeLogr
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   rubrica_holistica_id: z.string().optional().nullable(),
   indicador_id: z.number().int().optional().nullable(),
@@ -3080,7 +3100,6 @@ export const NivelesDeLogroCreateManyInputSchema: z.ZodType<Prisma.NivelesDeLogr
 export const NivelesDeLogroUpdateManyMutationInputSchema: z.ZodType<Prisma.NivelesDeLogroUpdateManyMutationInput> = z.object({
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -3091,7 +3110,6 @@ export const NivelesDeLogroUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Nive
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicador_id: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3688,6 +3706,11 @@ export const StateScalarRelationFilterSchema: z.ZodType<Prisma.StateScalarRelati
   isNot: z.lazy(() => StateWhereInputSchema).optional()
 }).strict();
 
+export const PreguntaNullableScalarRelationFilterSchema: z.ZodType<Prisma.PreguntaNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => PreguntaWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => PreguntaWhereInputSchema).optional().nullable()
+}).strict();
+
 export const PreguntaListRelationFilterSchema: z.ZodType<Prisma.PreguntaListRelationFilter> = z.object({
   every: z.lazy(() => PreguntaWhereInputSchema).optional(),
   some: z.lazy(() => PreguntaWhereInputSchema).optional(),
@@ -3740,6 +3763,7 @@ export const ExamenCountOrderByAggregateInputSchema: z.ZodType<Prisma.ExamenCoun
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   rubrica_analitica_id: z.lazy(() => SortOrderSchema).optional(),
   state_id: z.lazy(() => SortOrderSchema).optional(),
+  pregunta_actual_sync_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -3767,6 +3791,7 @@ export const ExamenMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ExamenMaxOrd
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   rubrica_analitica_id: z.lazy(() => SortOrderSchema).optional(),
   state_id: z.lazy(() => SortOrderSchema).optional(),
+  pregunta_actual_sync_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -3788,6 +3813,7 @@ export const ExamenMinOrderByAggregateInputSchema: z.ZodType<Prisma.ExamenMinOrd
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   rubrica_analitica_id: z.lazy(() => SortOrderSchema).optional(),
   state_id: z.lazy(() => SortOrderSchema).optional(),
+  pregunta_actual_sync_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -3824,6 +3850,11 @@ export const IndicadoresListRelationFilterSchema: z.ZodType<Prisma.IndicadoresLi
   every: z.lazy(() => IndicadoresWhereInputSchema).optional(),
   some: z.lazy(() => IndicadoresWhereInputSchema).optional(),
   none: z.lazy(() => IndicadoresWhereInputSchema).optional()
+}).strict();
+
+export const ExamenNullableScalarRelationFilterSchema: z.ZodType<Prisma.ExamenNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => ExamenWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => ExamenWhereInputSchema).optional().nullable()
 }).strict();
 
 export const RespuestaListRelationFilterSchema: z.ZodType<Prisma.RespuestaListRelationFilter> = z.object({
@@ -4143,13 +4174,6 @@ export const IndicadoresSumOrderByAggregateInputSchema: z.ZodType<Prisma.Indicad
   id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const EnumTipoNivelFilterSchema: z.ZodType<Prisma.EnumTipoNivelFilter> = z.object({
-  equals: z.lazy(() => TipoNivelSchema).optional(),
-  in: z.lazy(() => TipoNivelSchema).array().optional(),
-  notIn: z.lazy(() => TipoNivelSchema).array().optional(),
-  not: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => NestedEnumTipoNivelFilterSchema) ]).optional(),
-}).strict();
-
 export const IntNullableFilterSchema: z.ZodType<Prisma.IntNullableFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.number().array().optional().nullable(),
@@ -4186,7 +4210,6 @@ export const NivelesDeLogroCountOrderByAggregateInputSchema: z.ZodType<Prisma.Ni
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   criterios: z.lazy(() => SortOrderSchema).optional(),
-  tipo: z.lazy(() => SortOrderSchema).optional(),
   nota: z.lazy(() => SortOrderSchema).optional(),
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   indicador_id: z.lazy(() => SortOrderSchema).optional(),
@@ -4204,7 +4227,6 @@ export const NivelesDeLogroMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Nive
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   criterios: z.lazy(() => SortOrderSchema).optional(),
-  tipo: z.lazy(() => SortOrderSchema).optional(),
   nota: z.lazy(() => SortOrderSchema).optional(),
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   indicador_id: z.lazy(() => SortOrderSchema).optional(),
@@ -4217,7 +4239,6 @@ export const NivelesDeLogroMinOrderByAggregateInputSchema: z.ZodType<Prisma.Nive
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   criterios: z.lazy(() => SortOrderSchema).optional(),
-  tipo: z.lazy(() => SortOrderSchema).optional(),
   nota: z.lazy(() => SortOrderSchema).optional(),
   rubrica_holistica_id: z.lazy(() => SortOrderSchema).optional(),
   indicador_id: z.lazy(() => SortOrderSchema).optional(),
@@ -4229,16 +4250,6 @@ export const NivelesDeLogroMinOrderByAggregateInputSchema: z.ZodType<Prisma.Nive
 export const NivelesDeLogroSumOrderByAggregateInputSchema: z.ZodType<Prisma.NivelesDeLogroSumOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   indicador_id: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const EnumTipoNivelWithAggregatesFilterSchema: z.ZodType<Prisma.EnumTipoNivelWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => TipoNivelSchema).optional(),
-  in: z.lazy(() => TipoNivelSchema).array().optional(),
-  notIn: z.lazy(() => TipoNivelSchema).array().optional(),
-  not: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => NestedEnumTipoNivelWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumTipoNivelFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumTipoNivelFilterSchema).optional()
 }).strict();
 
 export const IntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.IntNullableWithAggregatesFilter> = z.object({
@@ -4705,6 +4716,12 @@ export const StateCreateNestedOneWithoutExamenesInputSchema: z.ZodType<Prisma.St
   connect: z.lazy(() => StateWhereUniqueInputSchema).optional()
 }).strict();
 
+export const PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  create: z.union([ z.lazy(() => PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PreguntaCreateOrConnectWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
+  connect: z.lazy(() => PreguntaWhereUniqueInputSchema).optional()
+}).strict();
+
 export const PreguntaCreateNestedManyWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaCreateNestedManyWithoutExamenInput> = z.object({
   create: z.union([ z.lazy(() => PreguntaCreateWithoutExamenInputSchema),z.lazy(() => PreguntaCreateWithoutExamenInputSchema).array(),z.lazy(() => PreguntaUncheckedCreateWithoutExamenInputSchema),z.lazy(() => PreguntaUncheckedCreateWithoutExamenInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PreguntaCreateOrConnectWithoutExamenInputSchema),z.lazy(() => PreguntaCreateOrConnectWithoutExamenInputSchema).array() ]).optional(),
@@ -4793,6 +4810,16 @@ export const StateUpdateOneRequiredWithoutExamenesNestedInputSchema: z.ZodType<P
   upsert: z.lazy(() => StateUpsertWithoutExamenesInputSchema).optional(),
   connect: z.lazy(() => StateWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => StateUpdateToOneWithWhereWithoutExamenesInputSchema),z.lazy(() => StateUpdateWithoutExamenesInputSchema),z.lazy(() => StateUncheckedUpdateWithoutExamenesInputSchema) ]).optional(),
+}).strict();
+
+export const PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema: z.ZodType<Prisma.PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInput> = z.object({
+  create: z.union([ z.lazy(() => PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => PreguntaCreateOrConnectWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
+  upsert: z.lazy(() => PreguntaUpsertWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => PreguntaWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => PreguntaWhereInputSchema) ]).optional(),
+  connect: z.lazy(() => PreguntaWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => PreguntaUpdateToOneWithWhereWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInputSchema) ]).optional(),
 }).strict();
 
 export const PreguntaUpdateManyWithoutExamenNestedInputSchema: z.ZodType<Prisma.PreguntaUpdateManyWithoutExamenNestedInput> = z.object({
@@ -4891,6 +4918,12 @@ export const ExamenCreateNestedOneWithoutPreguntasInputSchema: z.ZodType<Prisma.
   connect: z.lazy(() => ExamenWhereUniqueInputSchema).optional()
 }).strict();
 
+export const ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenCreateNestedOneWithoutPregunta_actual_syncInput> = z.object({
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema).optional(),
+  connect: z.lazy(() => ExamenWhereUniqueInputSchema).optional()
+}).strict();
+
 export const RespuestaCreateNestedManyWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaCreateNestedManyWithoutPreguntaInput> = z.object({
   create: z.union([ z.lazy(() => RespuestaCreateWithoutPreguntaInputSchema),z.lazy(() => RespuestaCreateWithoutPreguntaInputSchema).array(),z.lazy(() => RespuestaUncheckedCreateWithoutPreguntaInputSchema),z.lazy(() => RespuestaUncheckedCreateWithoutPreguntaInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => RespuestaCreateOrConnectWithoutPreguntaInputSchema),z.lazy(() => RespuestaCreateOrConnectWithoutPreguntaInputSchema).array() ]).optional(),
@@ -4909,6 +4942,12 @@ export const IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema: z.
   create: z.union([ z.lazy(() => IndicadoresCreateWithoutPreguntasInputSchema),z.lazy(() => IndicadoresCreateWithoutPreguntasInputSchema).array(),z.lazy(() => IndicadoresUncheckedCreateWithoutPreguntasInputSchema),z.lazy(() => IndicadoresUncheckedCreateWithoutPreguntasInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => IndicadoresCreateOrConnectWithoutPreguntasInputSchema),z.lazy(() => IndicadoresCreateOrConnectWithoutPreguntasInputSchema).array() ]).optional(),
   connect: z.union([ z.lazy(() => IndicadoresWhereUniqueInputSchema),z.lazy(() => IndicadoresWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInput> = z.object({
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema).optional(),
+  connect: z.lazy(() => ExamenWhereUniqueInputSchema).optional()
 }).strict();
 
 export const RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaUncheckedCreateNestedManyWithoutPreguntaInput> = z.object({
@@ -4954,6 +4993,16 @@ export const ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema: z.ZodType
   update: z.union([ z.lazy(() => ExamenUpdateToOneWithWhereWithoutPreguntasInputSchema),z.lazy(() => ExamenUpdateWithoutPreguntasInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutPreguntasInputSchema) ]).optional(),
 }).strict();
 
+export const ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema: z.ZodType<Prisma.ExamenUpdateOneWithoutPregunta_actual_syncNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema).optional(),
+  upsert: z.lazy(() => ExamenUpsertWithoutPregunta_actual_syncInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  connect: z.lazy(() => ExamenWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => ExamenUpdateToOneWithWhereWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUpdateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema) ]).optional(),
+}).strict();
+
 export const RespuestaUpdateManyWithoutPreguntaNestedInputSchema: z.ZodType<Prisma.RespuestaUpdateManyWithoutPreguntaNestedInput> = z.object({
   create: z.union([ z.lazy(() => RespuestaCreateWithoutPreguntaInputSchema),z.lazy(() => RespuestaCreateWithoutPreguntaInputSchema).array(),z.lazy(() => RespuestaUncheckedCreateWithoutPreguntaInputSchema),z.lazy(() => RespuestaUncheckedCreateWithoutPreguntaInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => RespuestaCreateOrConnectWithoutPreguntaInputSchema),z.lazy(() => RespuestaCreateOrConnectWithoutPreguntaInputSchema).array() ]).optional(),
@@ -4993,6 +5042,16 @@ export const IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema: z.
   update: z.union([ z.lazy(() => IndicadoresUpdateWithWhereUniqueWithoutPreguntasInputSchema),z.lazy(() => IndicadoresUpdateWithWhereUniqueWithoutPreguntasInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => IndicadoresUpdateManyWithWhereWithoutPreguntasInputSchema),z.lazy(() => IndicadoresUpdateManyWithWhereWithoutPreguntasInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => IndicadoresScalarWhereInputSchema),z.lazy(() => IndicadoresScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema).optional(),
+  upsert: z.lazy(() => ExamenUpsertWithoutPregunta_actual_syncInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => ExamenWhereInputSchema) ]).optional(),
+  connect: z.lazy(() => ExamenWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => ExamenUpdateToOneWithWhereWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUpdateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema) ]).optional(),
 }).strict();
 
 export const RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateManyWithoutPreguntaNestedInput> = z.object({
@@ -5407,10 +5466,6 @@ export const IndicadoresCreateNestedOneWithoutNiveles_de_logroInputSchema: z.Zod
   create: z.union([ z.lazy(() => IndicadoresCreateWithoutNiveles_de_logroInputSchema),z.lazy(() => IndicadoresUncheckedCreateWithoutNiveles_de_logroInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => IndicadoresCreateOrConnectWithoutNiveles_de_logroInputSchema).optional(),
   connect: z.lazy(() => IndicadoresWhereUniqueInputSchema).optional()
-}).strict();
-
-export const EnumTipoNivelFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumTipoNivelFieldUpdateOperationsInput> = z.object({
-  set: z.lazy(() => TipoNivelSchema).optional()
 }).strict();
 
 export const RubricaHolisticaUpdateOneWithoutNiveles_de_logroNestedInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateOneWithoutNiveles_de_logroNestedInput> = z.object({
@@ -5961,23 +6016,6 @@ export const NestedDecimalNullableWithAggregatesFilterSchema: z.ZodType<Prisma.N
   _max: z.lazy(() => NestedDecimalNullableFilterSchema).optional()
 }).strict();
 
-export const NestedEnumTipoNivelFilterSchema: z.ZodType<Prisma.NestedEnumTipoNivelFilter> = z.object({
-  equals: z.lazy(() => TipoNivelSchema).optional(),
-  in: z.lazy(() => TipoNivelSchema).array().optional(),
-  notIn: z.lazy(() => TipoNivelSchema).array().optional(),
-  not: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => NestedEnumTipoNivelFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedEnumTipoNivelWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumTipoNivelWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => TipoNivelSchema).optional(),
-  in: z.lazy(() => TipoNivelSchema).array().optional(),
-  notIn: z.lazy(() => TipoNivelSchema).array().optional(),
-  not: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => NestedEnumTipoNivelWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumTipoNivelFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumTipoNivelFilterSchema).optional()
-}).strict();
-
 export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntNullableWithAggregatesFilter> = z.object({
   equals: z.number().optional().nullable(),
   in: z.number().array().optional().nullable(),
@@ -6040,6 +6078,7 @@ export const ExamenCreateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenCreateW
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -6060,6 +6099,7 @@ export const ExamenUncheckedCreateWithoutCursoInputSchema: z.ZodType<Prisma.Exam
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -6140,6 +6180,7 @@ export const ExamenScalarWhereInputSchema: z.ZodType<Prisma.ExamenScalarWhereInp
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   state_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -6377,6 +6418,7 @@ export const ExamenCreateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenC
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional()
 }).strict();
@@ -6397,6 +6439,7 @@ export const ExamenUncheckedCreateWithoutEjecucionesInputSchema: z.ZodType<Prism
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -6550,6 +6593,7 @@ export const ExamenUpdateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenU
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional()
 }).strict();
@@ -6570,6 +6614,7 @@ export const ExamenUncheckedUpdateWithoutEjecucionesInputSchema: z.ZodType<Prism
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6681,6 +6726,7 @@ export const PreguntaCreateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresCreateNestedManyWithoutPreguntasInputSchema).optional(),
   examen: z.lazy(() => ExamenCreateNestedOneWithoutPreguntasInputSchema),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
 
@@ -6695,6 +6741,7 @@ export const PreguntaUncheckedCreateWithoutPreguntasEjecucionExamenInputSchema: 
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   examen_id: z.string(),
   indicadores: z.lazy(() => IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
 
@@ -6810,6 +6857,7 @@ export const PreguntaUpdateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUpdateManyWithoutPreguntasNestedInputSchema).optional(),
   examen: z.lazy(() => ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
 
@@ -6824,6 +6872,7 @@ export const PreguntaUncheckedUpdateWithoutPreguntasEjecucionExamenInputSchema: 
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   indicadores: z.lazy(() => IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
 
@@ -7020,6 +7069,41 @@ export const StateCreateOrConnectWithoutExamenesInputSchema: z.ZodType<Prisma.St
   create: z.union([ z.lazy(() => StateCreateWithoutExamenesInputSchema),z.lazy(() => StateUncheckedCreateWithoutExamenesInputSchema) ]),
 }).strict();
 
+export const PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string(),
+  description: z.string().optional().nullable(),
+  img: z.string().optional().nullable(),
+  video: z.string().optional().nullable(),
+  audio: z.string().optional().nullable(),
+  puntos: z.number().int().optional(),
+  duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  indicadores: z.lazy(() => IndicadoresCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen: z.lazy(() => ExamenCreateNestedOneWithoutPreguntasInputSchema),
+  respuestas: z.lazy(() => RespuestaCreateNestedManyWithoutPreguntaInputSchema).optional(),
+  preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutPreguntaInputSchema).optional()
+}).strict();
+
+export const PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string(),
+  description: z.string().optional().nullable(),
+  img: z.string().optional().nullable(),
+  video: z.string().optional().nullable(),
+  audio: z.string().optional().nullable(),
+  puntos: z.number().int().optional(),
+  duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  examen_id: z.string(),
+  indicadores: z.lazy(() => IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  respuestas: z.lazy(() => RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional(),
+  preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
+}).strict();
+
+export const PreguntaCreateOrConnectWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaCreateOrConnectWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  where: z.lazy(() => PreguntaWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema) ]),
+}).strict();
+
 export const PreguntaCreateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutExamenInput> = z.object({
   id: z.string().uuid().optional(),
   title: z.string(),
@@ -7030,6 +7114,7 @@ export const PreguntaCreateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaCr
   puntos: z.number().int().optional(),
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -7044,6 +7129,7 @@ export const PreguntaUncheckedCreateWithoutExamenInputSchema: z.ZodType<Prisma.P
   puntos: z.number().int().optional(),
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -7277,6 +7363,47 @@ export const StateUncheckedUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.St
   name: z.union([ z.lazy(() => StateTypeSchema),z.lazy(() => EnumStateTypeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const PreguntaUpsertWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUpsertWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  update: z.union([ z.lazy(() => PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInputSchema) ]),
+  create: z.union([ z.lazy(() => PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema) ]),
+  where: z.lazy(() => PreguntaWhereInputSchema).optional()
+}).strict();
+
+export const PreguntaUpdateToOneWithWhereWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUpdateToOneWithWhereWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  where: z.lazy(() => PreguntaWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema),z.lazy(() => PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInputSchema) ]),
+}).strict();
+
+export const PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  indicadores: z.lazy(() => IndicadoresUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen: z.lazy(() => ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema).optional(),
+  respuestas: z.lazy(() => RespuestaUpdateManyWithoutPreguntaNestedInputSchema).optional(),
+  preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutPreguntaNestedInputSchema).optional()
+}).strict();
+
+export const PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  indicadores: z.lazy(() => IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  respuestas: z.lazy(() => RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional(),
+  preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
+}).strict();
+
 export const PreguntaUpsertWithWhereUniqueWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUpsertWithWhereUniqueWithoutExamenInput> = z.object({
   where: z.lazy(() => PreguntaWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => PreguntaUpdateWithoutExamenInputSchema),z.lazy(() => PreguntaUncheckedUpdateWithoutExamenInputSchema) ]),
@@ -7410,6 +7537,7 @@ export const ExamenCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenCre
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
 }).strict();
@@ -7430,6 +7558,7 @@ export const ExamenUncheckedCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -7440,6 +7569,59 @@ export const ExamenUncheckedCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.
 export const ExamenCreateOrConnectWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenCreateOrConnectWithoutPreguntasInput> = z.object({
   where: z.lazy(() => ExamenWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => ExamenCreateWithoutPreguntasInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPreguntasInputSchema) ]),
+}).strict();
+
+export const ExamenCreateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenCreateWithoutPregunta_actual_syncInput> = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string(),
+  description: z.string().optional().nullable(),
+  img: z.string().optional().nullable(),
+  video: z.string().optional().nullable(),
+  audio: z.string().optional().nullable(),
+  peso: z.number().int().optional(),
+  inicio_examen: z.coerce.date().optional().nullable(),
+  final_examen: z.coerce.date().optional().nullable(),
+  tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable(),
+  user: z.lazy(() => UserCreateNestedOneWithoutExamenes_creadosInputSchema),
+  curso: z.lazy(() => CursoCreateNestedOneWithoutExamenesInputSchema),
+  rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
+  rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
+  state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
+  historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
+  ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
+}).strict();
+
+export const ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutPregunta_actual_syncInput> = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string(),
+  description: z.string().optional().nullable(),
+  img: z.string().optional().nullable(),
+  video: z.string().optional().nullable(),
+  audio: z.string().optional().nullable(),
+  peso: z.number().int().optional(),
+  user_id: z.number().int(),
+  curso_id: z.string(),
+  inicio_examen: z.coerce.date().optional().nullable(),
+  final_examen: z.coerce.date().optional().nullable(),
+  tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
+  rubrica_holistica_id: z.string().optional().nullable(),
+  rubrica_analitica_id: z.string().optional().nullable(),
+  state_id: z.number().int(),
+  created_at: z.coerce.date().optional(),
+  updated_at: z.coerce.date().optional(),
+  deleted_at: z.coerce.date().optional().nullable(),
+  preguntas: z.lazy(() => PreguntaUncheckedCreateNestedManyWithoutExamenInputSchema).optional(),
+  historial: z.lazy(() => HistorialUncheckedCreateNestedManyWithoutExamenInputSchema).optional(),
+  ejecuciones: z.lazy(() => EjecucionExamenUncheckedCreateNestedManyWithoutExamenInputSchema).optional()
+}).strict();
+
+export const ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenCreateOrConnectWithoutPregunta_actual_syncInput> = z.object({
+  where: z.lazy(() => ExamenWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]),
 }).strict();
 
 export const RespuestaCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaCreateWithoutPreguntaInput> = z.object({
@@ -7564,6 +7746,7 @@ export const ExamenUpdateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenUpd
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
 }).strict();
@@ -7584,9 +7767,69 @@ export const ExamenUncheckedUpdateWithoutPreguntasInputSchema: z.ZodType<Prisma.
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  historial: z.lazy(() => HistorialUncheckedUpdateManyWithoutExamenNestedInputSchema).optional(),
+  ejecuciones: z.lazy(() => EjecucionExamenUncheckedUpdateManyWithoutExamenNestedInputSchema).optional()
+}).strict();
+
+export const ExamenUpsertWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUpsertWithoutPregunta_actual_syncInput> = z.object({
+  update: z.union([ z.lazy(() => ExamenUpdateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema) ]),
+  create: z.union([ z.lazy(() => ExamenCreateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema) ]),
+  where: z.lazy(() => ExamenWhereInputSchema).optional()
+}).strict();
+
+export const ExamenUpdateToOneWithWhereWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUpdateToOneWithWhereWithoutPregunta_actual_syncInput> = z.object({
+  where: z.lazy(() => ExamenWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => ExamenUpdateWithoutPregunta_actual_syncInputSchema),z.lazy(() => ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema) ]),
+}).strict();
+
+export const ExamenUpdateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutPregunta_actual_syncInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  peso: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  inicio_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  final_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  user: z.lazy(() => UserUpdateOneRequiredWithoutExamenes_creadosNestedInputSchema).optional(),
+  curso: z.lazy(() => CursoUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
+  rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
+  state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
+  historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
+  ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
+}).strict();
+
+export const ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutPregunta_actual_syncInput> = z.object({
+  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  peso: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  curso_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  inicio_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  final_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
+  rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  preguntas: z.lazy(() => PreguntaUncheckedUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUncheckedUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUncheckedUpdateManyWithoutExamenNestedInputSchema).optional()
 }).strict();
@@ -7647,6 +7890,7 @@ export const PreguntaCreateWithoutRespuestasInputSchema: z.ZodType<Prisma.Pregun
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresCreateNestedManyWithoutPreguntasInputSchema).optional(),
   examen: z.lazy(() => ExamenCreateNestedOneWithoutPreguntasInputSchema),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
 
@@ -7661,6 +7905,7 @@ export const PreguntaUncheckedCreateWithoutRespuestasInputSchema: z.ZodType<Pris
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   examen_id: z.string(),
   indicadores: z.lazy(() => IndicadoresUncheckedCreateNestedManyWithoutPreguntasInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
 
@@ -7725,6 +7970,7 @@ export const PreguntaUpdateWithoutRespuestasInputSchema: z.ZodType<Prisma.Pregun
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUpdateManyWithoutPreguntasNestedInputSchema).optional(),
   examen: z.lazy(() => ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
 
@@ -7739,6 +7985,7 @@ export const PreguntaUncheckedUpdateWithoutRespuestasInputSchema: z.ZodType<Pris
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   indicadores: z.lazy(() => IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
 
@@ -7819,6 +8066,7 @@ export const ExamenCreateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenCre
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
 }).strict();
@@ -7839,6 +8087,7 @@ export const ExamenUncheckedCreateWithoutHistorialInputSchema: z.ZodType<Prisma.
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -7929,6 +8178,7 @@ export const ExamenUpdateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenUpd
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
 }).strict();
@@ -7949,6 +8199,7 @@ export const ExamenUncheckedUpdateWithoutHistorialInputSchema: z.ZodType<Prisma.
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8001,7 +8252,6 @@ export const UserCreateOrConnectWithoutRubricas_holisticasInputSchema: z.ZodType
 export const NivelesDeLogroCreateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.NivelesDeLogroCreateWithoutRubrica_holisticaInput> = z.object({
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -8013,7 +8263,6 @@ export const NivelesDeLogroUncheckedCreateWithoutRubrica_holisticaInputSchema: z
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   indicador_id: z.number().int().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -8049,6 +8298,7 @@ export const ExamenCreateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.E
   curso: z.lazy(() => CursoCreateNestedOneWithoutExamenesInputSchema),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -8069,6 +8319,7 @@ export const ExamenUncheckedCreateWithoutRubrica_holisticaInputSchema: z.ZodType
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8158,7 +8409,6 @@ export const NivelesDeLogroScalarWhereInputSchema: z.ZodType<Prisma.NivelesDeLog
   id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   criterios: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  tipo: z.union([ z.lazy(() => EnumTipoNivelFilterSchema),z.lazy(() => TipoNivelSchema) ]).optional(),
   nota: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   rubrica_holistica_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   indicador_id: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -8272,6 +8522,7 @@ export const ExamenCreateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.E
   curso: z.lazy(() => CursoCreateNestedOneWithoutExamenesInputSchema),
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -8292,6 +8543,7 @@ export const ExamenUncheckedCreateWithoutRubrica_analiticaInputSchema: z.ZodType
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_holistica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8425,6 +8677,7 @@ export const PreguntaCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.Pregu
   puntos: z.number().int().optional(),
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   examen: z.lazy(() => ExamenCreateNestedOneWithoutPreguntasInputSchema),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -8439,6 +8692,7 @@ export const PreguntaUncheckedCreateWithoutIndicadoresInputSchema: z.ZodType<Pri
   puntos: z.number().int().optional(),
   duracion: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   examen_id: z.string(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedCreateNestedOneWithoutPregunta_actual_syncInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutPreguntaInputSchema).optional()
 }).strict();
@@ -8451,7 +8705,6 @@ export const PreguntaCreateOrConnectWithoutIndicadoresInputSchema: z.ZodType<Pri
 export const NivelesDeLogroCreateWithoutIndicadorInputSchema: z.ZodType<Prisma.NivelesDeLogroCreateWithoutIndicadorInput> = z.object({
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -8463,7 +8716,6 @@ export const NivelesDeLogroUncheckedCreateWithoutIndicadorInputSchema: z.ZodType
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   rubrica_holistica_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -8672,6 +8924,7 @@ export const ExamenCreateWithoutStateInputSchema: z.ZodType<Prisma.ExamenCreateW
   curso: z.lazy(() => CursoCreateNestedOneWithoutExamenesInputSchema),
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -8692,6 +8945,7 @@ export const ExamenUncheckedCreateWithoutStateInputSchema: z.ZodType<Prisma.Exam
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8832,6 +9086,7 @@ export const ExamenCreateWithoutUserInputSchema: z.ZodType<Prisma.ExamenCreateWi
   rubrica_holistica: z.lazy(() => RubricaHolisticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaCreateNestedOneWithoutExamenesInputSchema).optional(),
   state: z.lazy(() => StateCreateNestedOneWithoutExamenesInputSchema),
+  pregunta_actual_sync: z.lazy(() => PreguntaCreateNestedOneWithoutExamen_con_pregunta_actual_syncInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaCreateNestedManyWithoutExamenInputSchema).optional(),
   historial: z.lazy(() => HistorialCreateNestedManyWithoutExamenInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenCreateNestedManyWithoutExamenInputSchema).optional()
@@ -8852,6 +9107,7 @@ export const ExamenUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.Exame
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -9064,6 +9320,7 @@ export const ExamenCreateManyCursoInputSchema: z.ZodType<Prisma.ExamenCreateMany
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9096,6 +9353,7 @@ export const ExamenUpdateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUpdateW
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -9116,6 +9374,7 @@ export const ExamenUncheckedUpdateWithoutCursoInputSchema: z.ZodType<Prisma.Exam
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9139,6 +9398,7 @@ export const ExamenUncheckedUpdateManyWithoutCursoInputSchema: z.ZodType<Prisma.
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9256,6 +9516,7 @@ export const PreguntaUpdateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUp
   puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -9270,6 +9531,7 @@ export const PreguntaUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.P
   puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   indicadores: z.lazy(() => IndicadoresUncheckedUpdateManyWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -9506,7 +9768,6 @@ export const NivelesDeLogroCreateManyRubrica_holisticaInputSchema: z.ZodType<Pri
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   indicador_id: z.number().int().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -9529,6 +9790,7 @@ export const ExamenCreateManyRubrica_holisticaInputSchema: z.ZodType<Prisma.Exam
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9537,7 +9799,6 @@ export const ExamenCreateManyRubrica_holisticaInputSchema: z.ZodType<Prisma.Exam
 export const NivelesDeLogroUpdateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.NivelesDeLogroUpdateWithoutRubrica_holisticaInput> = z.object({
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9549,7 +9810,6 @@ export const NivelesDeLogroUncheckedUpdateWithoutRubrica_holisticaInputSchema: z
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   indicador_id: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9561,7 +9821,6 @@ export const NivelesDeLogroUncheckedUpdateManyWithoutRubrica_holisticaInputSchem
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   indicador_id: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9587,6 +9846,7 @@ export const ExamenUpdateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.E
   curso: z.lazy(() => CursoUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -9607,6 +9867,7 @@ export const ExamenUncheckedUpdateWithoutRubrica_holisticaInputSchema: z.ZodType
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9630,6 +9891,7 @@ export const ExamenUncheckedUpdateManyWithoutRubrica_holisticaInputSchema: z.Zod
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9658,6 +9920,7 @@ export const ExamenCreateManyRubrica_analiticaInputSchema: z.ZodType<Prisma.Exam
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_holistica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9708,6 +9971,7 @@ export const ExamenUpdateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.E
   curso: z.lazy(() => CursoUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -9728,6 +9992,7 @@ export const ExamenUncheckedUpdateWithoutRubrica_analiticaInputSchema: z.ZodType
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9751,6 +10016,7 @@ export const ExamenUncheckedUpdateManyWithoutRubrica_analiticaInputSchema: z.Zod
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9760,7 +10026,6 @@ export const NivelesDeLogroCreateManyIndicadorInputSchema: z.ZodType<Prisma.Nive
   id: z.number().int().optional(),
   name: z.string(),
   criterios: z.string(),
-  tipo: z.lazy(() => TipoNivelSchema),
   nota: z.string(),
   rubrica_holistica_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -9778,6 +10043,7 @@ export const PreguntaUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.Pregu
   puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   examen: z.lazy(() => ExamenUpdateOneRequiredWithoutPreguntasNestedInputSchema).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -9792,6 +10058,7 @@ export const PreguntaUncheckedUpdateWithoutIndicadoresInputSchema: z.ZodType<Pri
   puntos: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   duracion: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  examen_con_pregunta_actual_sync: z.lazy(() => ExamenUncheckedUpdateOneWithoutPregunta_actual_syncNestedInputSchema).optional(),
   respuestas: z.lazy(() => RespuestaUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional(),
   preguntasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaNestedInputSchema).optional()
 }).strict();
@@ -9811,7 +10078,6 @@ export const PreguntaUncheckedUpdateManyWithoutIndicadoresInputSchema: z.ZodType
 export const NivelesDeLogroUpdateWithoutIndicadorInputSchema: z.ZodType<Prisma.NivelesDeLogroUpdateWithoutIndicadorInput> = z.object({
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9823,7 +10089,6 @@ export const NivelesDeLogroUncheckedUpdateWithoutIndicadorInputSchema: z.ZodType
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9835,7 +10100,6 @@ export const NivelesDeLogroUncheckedUpdateManyWithoutIndicadorInputSchema: z.Zod
   id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   criterios: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tipo: z.union([ z.lazy(() => TipoNivelSchema),z.lazy(() => EnumTipoNivelFieldUpdateOperationsInputSchema) ]).optional(),
   nota: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9858,6 +10122,7 @@ export const ExamenCreateManyStateInputSchema: z.ZodType<Prisma.ExamenCreateMany
   tipo_examen: z.lazy(() => TipoExamenSchema).optional(),
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9881,6 +10146,7 @@ export const ExamenUpdateWithoutStateInputSchema: z.ZodType<Prisma.ExamenUpdateW
   curso: z.lazy(() => CursoUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -9901,6 +10167,7 @@ export const ExamenUncheckedUpdateWithoutStateInputSchema: z.ZodType<Prisma.Exam
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9924,6 +10191,7 @@ export const ExamenUncheckedUpdateManyWithoutStateInputSchema: z.ZodType<Prisma.
   tipo_examen: z.union([ z.lazy(() => TipoExamenSchema),z.lazy(() => EnumTipoExamenFieldUpdateOperationsInputSchema) ]).optional(),
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9969,6 +10237,7 @@ export const ExamenCreateManyUserInputSchema: z.ZodType<Prisma.ExamenCreateManyU
   rubrica_holistica_id: z.string().optional().nullable(),
   rubrica_analitica_id: z.string().optional().nullable(),
   state_id: z.number().int(),
+  pregunta_actual_sync_id: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -10094,6 +10363,7 @@ export const ExamenUpdateWithoutUserInputSchema: z.ZodType<Prisma.ExamenUpdateWi
   rubrica_holistica: z.lazy(() => RubricaHolisticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   rubrica_analitica: z.lazy(() => RubricaAnaliticaUpdateOneWithoutExamenesNestedInputSchema).optional(),
   state: z.lazy(() => StateUpdateOneRequiredWithoutExamenesNestedInputSchema).optional(),
+  pregunta_actual_sync: z.lazy(() => PreguntaUpdateOneWithoutExamen_con_pregunta_actual_syncNestedInputSchema).optional(),
   preguntas: z.lazy(() => PreguntaUpdateManyWithoutExamenNestedInputSchema).optional(),
   historial: z.lazy(() => HistorialUpdateManyWithoutExamenNestedInputSchema).optional(),
   ejecuciones: z.lazy(() => EjecucionExamenUpdateManyWithoutExamenNestedInputSchema).optional()
@@ -10114,6 +10384,7 @@ export const ExamenUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Exame
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10137,6 +10408,7 @@ export const ExamenUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.E
   rubrica_holistica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   rubrica_analitica_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   state_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  pregunta_actual_sync_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),

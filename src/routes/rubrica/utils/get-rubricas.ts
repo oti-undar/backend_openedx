@@ -17,6 +17,11 @@ export async function getRubricasHolistica({
     },
     include: {
       niveles_de_logro: true,
+      _count: {
+        select: {
+          examenes: true,
+        },
+      },
     },
   })
 
@@ -38,6 +43,11 @@ export async function getRubricasAnalitica({
       indicadores: {
         include: {
           niveles_de_logro: true,
+        },
+      },
+      _count: {
+        select: {
+          examenes: true,
         },
       },
     },

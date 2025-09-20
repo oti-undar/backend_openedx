@@ -24,13 +24,16 @@ model Examen {
     tipo_examen TipoExamen @default(Async)
 
     rubrica_holistica_id String?
-    rubrica_holistica    RubricaHolistica? @relation(fields: [rubrica_holistica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    rubrica_holistica    RubricaHolistica? @relation(fields: [rubrica_holistica_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     rubrica_analitica_id String?
-    rubrica_analitica    RubricaAnalitica? @relation(fields: [rubrica_analitica_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    rubrica_analitica    RubricaAnalitica? @relation(fields: [rubrica_analitica_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     state_id Int
     state    State @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    pregunta_actual_sync_id String?   @unique
+    pregunta_actual_sync    Pregunta? @relation("pregunta_actual_sync", fields: [pregunta_actual_sync_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     preguntas   Pregunta[]
     historial   Historial[]
@@ -52,10 +55,11 @@ model Pregunta {
     duracion    Decimal? @db.Decimal(6, 2)
     examen_id   String
 
-    indicadores              Indicadores[]
-    examen                   Examen                     @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    respuestas               Respuesta[]
-    preguntasEjecucionExamen PreguntasEjecucionExamen[]
+    indicadores                     Indicadores[]
+    examen                          Examen                     @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    examen_con_pregunta_actual_sync Examen?                    @relation("pregunta_actual_sync")
+    respuestas                      Respuesta[]
+    preguntasEjecucionExamen        PreguntasEjecucionExamen[]
 }
 
 model Respuesta {

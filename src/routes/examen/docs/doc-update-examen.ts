@@ -5,8 +5,16 @@ import {
 } from '@/schemas/validation.js'
 import {
   ExamenSchema,
+  ExamenUncheckedUpdateInputSchema,
   ExamenUpdateInputSchema,
 } from '@/db/generated/zod/index.js'
+
+const updateExamenSchema = z.union([
+  ExamenUpdateInputSchema,
+  ExamenUncheckedUpdateInputSchema,
+])
+
+export type UpdateExamenSchemaProps = z.infer<typeof updateExamenSchema>
 
 export const updateExamenRoute = createRoute({
   method: 'post',
@@ -20,7 +28,7 @@ export const updateExamenRoute = createRoute({
     body: {
       content: {
         'application/json': {
-          schema: ExamenUpdateInputSchema,
+          schema: updateExamenSchema,
         },
       },
       required: true,

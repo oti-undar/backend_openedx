@@ -24,14 +24,67 @@ export async function getExamenes({
           name: true,
         },
       },
+      ejecuciones: {
+        select: {
+          id: true,
+          preguntas_resueltas: {
+            include: {
+              pregunta: {
+                include: {
+                  respuestas: true,
+                },
+              },
+              respuesta: true,
+            },
+          },
+        },
+      },
       preguntas: {
         select: {
           id: true,
+          puntos: true,
+          indicadores: {
+            select: {
+              id: true,
+            },
+          },
         },
       },
       state: {
         select: {
           name: true,
+        },
+      },
+      rubrica_analitica: {
+        select: {
+          id: true,
+          name: true,
+          indicadores: {
+            select: {
+              id: true,
+              name: true,
+              niveles_de_logro: {
+                select: {
+                  id: true,
+                  name: true,
+                  nota: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      rubrica_holistica: {
+        select: {
+          id: true,
+          name: true,
+          niveles_de_logro: {
+            select: {
+              id: true,
+              name: true,
+              nota: true,
+            },
+          },
         },
       },
     },

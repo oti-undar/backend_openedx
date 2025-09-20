@@ -9,14 +9,6 @@ import {
   PreguntasEjecucionExamenSchema,
 } from '@/db/generated/zod/index.js'
 
-const getEjecucionExamenRouteSchema = getUserIdSchema.extend({
-  examen_id: z.string().uuid(),
-})
-
-export type getEjecucionExamenRouteSchemaProps = z.infer<
-  typeof getEjecucionExamenRouteSchema
->
-
 const ResponseEjecucionExamenSchema = EjecucionExamenSchema.extend({
   pregunta_ejecucion_actual: PreguntasEjecucionExamenSchema.nullable(),
   preguntas_resueltas: z.array(PreguntasEjecucionExamenSchema),
@@ -28,12 +20,13 @@ export type ResponseEjecucionExamenSchemaProps = z.infer<
 
 export const getEjecucionExamenRoute = createRoute({
   method: 'get',
-  path: '/',
+  path: '/:id',
   tags: ['Examen'],
   summary: 'Obtener ejecución de examen',
   description: 'Obtener ejecución de examen.',
   request: {
-    query: getEjecucionExamenRouteSchema,
+    query: getUserIdSchema,
+    params: EjecucionExamenSchema.pick({ id: true }),
   },
   responses: {
     ...validateErrorResponse,

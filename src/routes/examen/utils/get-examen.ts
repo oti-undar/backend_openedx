@@ -1,9 +1,6 @@
 import type { dbTransaction } from '@/db/db.js'
-import type { getUserIdSchemaProps } from '@/schemas/validation.js'
-import type {
-  ExamenWhereInputSchemaProps,
-  getExamenSchemaProps,
-} from '../docs/doc-get-examen.js'
+import type { getExamenSchemaProps } from '../docs/doc-get-examen.js'
+import type { Prisma } from '@prisma/client'
 
 export async function getExamen({
   item,
@@ -11,19 +8,21 @@ export async function getExamen({
   incluirCorrecta = false,
 }: {
   item: {
-    filters?: ExamenWhereInputSchemaProps
+    filters?: Prisma.ExamenWhereInput
+    includes?: Prisma.ExamenInclude
   } & getExamenSchemaProps
   prisma: dbTransaction
   incluirCorrecta?: boolean
 }) {
-  const { filters, examen_id: id } = item
-  const examen = await prisma.examen.findUniqueOrThrow({
+  const { filters = [], examen_id: id, includes = [] } = item
+  const examen = await prisma.examen.findFirstOrThrow({
     where: {
       ...filters,
       id,
     },
     include: {
       curso: true,
+      pregunta_actual_sync: true,
       preguntas: {
         include: {
           respuestas: {
@@ -38,6 +37,7 @@ export async function getExamen({
           },
         },
       },
+      ...includes,
     },
   })
 

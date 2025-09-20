@@ -2,6 +2,7 @@ import type { dbTransaction } from '@/db/db.js'
 import type { PreguntasEjecucionExamen, Prisma } from '@prisma/client'
 import type { UpdatePreguntaEjecucionExamenSchema } from '../docs/doc-update-pregunta-ejecucion-examen.js'
 import { createEjecucionExamen } from './create-ejecucion-examen.js'
+import { getEjecucionExamen } from './get-ejecucion-examen.js'
 
 export async function updatePreguntaEjecucionExamen({
   item,
@@ -13,12 +14,28 @@ export async function updatePreguntaEjecucionExamen({
   pregunta_ejecucion_actual_id: PreguntasEjecucionExamen['id']
 }) {
   const { nueva_pregunta_actual, ...rest } = item
+
+  await prisma.preguntasEjecucionExamen.update({
+    where: {
+      id: pregunta_ejecucion_actual_id,
+    },
+    data: rest,
+  })
+
   const pregunta_ejecucion_actualizada =
-    await prisma.preguntasEjecucionExamen.update({
+    await prisma.preguntasEjecucionExamen.findUniqueOrThrow({
       where: {
         id: pregunta_ejecucion_actual_id,
       },
-      data: rest,
+      select: {
+        ejecucion_examen_id: true,
+        ejecucion_examen: {
+          select: {
+            user_id: true,
+            examen_id: true,
+          },
+        },
+      },
     })
 
   if (nueva_pregunta_actual) {
@@ -41,5 +58,13 @@ export async function updatePreguntaEjecucionExamen({
     })
   }
 
-  return pregunta_ejecucion_actualizada
+  const ejecucion_examen = await getEjecucionExamen({
+    item: {
+      examen_id: pregunta_ejecucion_actualizada.ejecucion_examen.examen_id,
+      user_id: pregunta_ejecucion_actualizada.ejecucion_examen.user_id,
+    },
+    prisma,
+  })
+
+  return ejecucion_examen
 }

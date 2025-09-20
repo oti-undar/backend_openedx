@@ -5,12 +5,10 @@ import {
 } from '@/schemas/validation.js'
 import { examenSchemaExample } from '../schemas/examen-schema.js'
 import {
+  ExamenIncludeSchema,
   ExamenSchema,
   ExamenWhereInputSchema,
 } from '@/db/generated/zod/index.js'
-import qs from 'qs'
-
-export type ExamenWhereInputSchemaProps = z.infer<typeof ExamenWhereInputSchema>
 
 const getExamenSchema = z
   .object({
@@ -26,7 +24,15 @@ const getExamenSchema = z
 export type getExamenSchemaProps = z.infer<typeof getExamenSchema>
 
 const queryCompleteSchema = z.object({
-  filters: ExamenWhereInputSchema.optional(),
+  filters: z
+    .string()
+    .transform(val => JSON.parse(val))
+    .pipe(ExamenWhereInputSchema),
+  includes: z
+    .string()
+    .transform(val => JSON.parse(val))
+    .pipe(ExamenIncludeSchema)
+    .optional(),
 })
 
 export type queryCompleteSchemaProps = z.infer<typeof queryCompleteSchema>
@@ -39,28 +45,8 @@ export const getExamenRoute = createRoute({
   description:
     'Obtener examen. Recibe como parámetros el ID del usuario (string) y el ID del examen (string).',
   request: {
-    query: z.object({
-      filters: z
-        .any()
-        .optional()
-        .openapi({
-          example: { state: { name: 'Activo' } },
-          description: 'Filtros para obtener examen',
-        }),
-    }),
+    query: queryCompleteSchema,
     params: getExamenSchema,
-  },
-  middleware: async (c, next) => {
-    const url = c.req.url
-    const queryStr = url.split('?')[1] ?? ''
-    const parsedQuery = qs.parse(queryStr)
-
-    const result = queryCompleteSchema.safeParse(parsedQuery)
-
-    if (!result.success) return c.json(result, 400)
-
-    c.set('queryValidated', result.data)
-    await next()
   },
   responses: {
     ...validateErrorResponse,

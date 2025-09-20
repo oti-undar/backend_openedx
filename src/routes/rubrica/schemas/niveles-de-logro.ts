@@ -1,4 +1,3 @@
-import { TipoNivel } from '@prisma/client'
 import {
   NivelesDeLogroCreateInputSchema,
   NivelesDeLogroSchema,
@@ -6,7 +5,6 @@ import {
 
 export const nivelesDeLogroSchemaExample = {
   id: 1,
-  tipo: TipoNivel.Porcentaje,
   name: 'Test',
   rubrica_analitica_id: 4,
   indicador_id: 1,

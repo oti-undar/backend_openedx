@@ -44,7 +44,7 @@ examen.openapi(getExamenesRoute, async c => {
 })
 
 examen.openapi(getExamenRoute, async c => {
-  const filters = c.get('queryValidated') as queryCompleteSchemaProps
+  const filters = c.req.valid('query')
   const { examen_id } = c.req.valid('param')
   try {
     const examen = await db.$transaction(async prisma => {

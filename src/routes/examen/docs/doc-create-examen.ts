@@ -57,6 +57,7 @@ const createExamenSchema = addOptionalToNullable(ExamenSchema)
     state_id: true,
     peso: true,
     user_id: true,
+    pregunta_actual_sync_id: true,
   })
   .extend({
     user_id: z

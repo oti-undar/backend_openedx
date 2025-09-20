@@ -53,10 +53,10 @@ export const updatePreguntaEjecucionExamenRoute = createRoute({
     200: {
       content: {
         'application/json': {
-          schema: messageSuccessGeneric,
+          schema: EjecucionExamenSchema,
         },
       },
-      description: 'Devuelve un mensaje de éxito',
+      description: 'Devuelve la ejecución del examen',
     },
   },
 })
