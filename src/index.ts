@@ -190,6 +190,8 @@ import { finalizarExamen } from './routes/examen/helpers/finalizar-examen.js'
         empezarJobExamen(examen.id)
       })
   })
+
+  console.log('🚀 ~ file: index.ts:51 ~ listJobs():', listJobs())
 })()
 
 const app = new OpenAPIHono()
