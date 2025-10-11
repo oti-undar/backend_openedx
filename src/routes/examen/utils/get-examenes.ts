@@ -18,10 +18,22 @@ export async function getExamenes({
       id: true,
       title: true,
       description: true,
+      tipo_examen: true,
       curso: {
         select: {
           id: true,
           name: true,
+          _count: {
+            select: {
+              usuarios: {
+                where: {
+                  id: {
+                    not: item.user_id,
+                  },
+                },
+              },
+            },
+          },
         },
       },
       ejecuciones: {
@@ -32,6 +44,7 @@ export async function getExamenes({
               pregunta: {
                 include: {
                   respuestas: true,
+                  indicadores: true,
                 },
               },
               respuesta: true,

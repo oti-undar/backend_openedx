@@ -24,8 +24,78 @@ import {
   getRubricasAnalitica,
   getRubricasHolistica,
 } from './utils/get-rubricas.js'
+import {
+  removeRubricaAnaliticaRoute,
+  removeRubricaHolisticaRoute,
+} from './docs/doc-remove-rubrica.js'
+import {
+  removeRubricaAnalitica,
+  removeRubricaHolistica,
+} from './utils/remove-rubrica.js'
+import {
+  editRubricaAnaliticaRoute,
+  editRubricaHolisticaRoute,
+} from './docs/doc-edit-rubrica.js'
+import {
+  editRubricaAnalitica,
+  editRubricaHolistica,
+} from './utils/edit-rubrica.js'
 
 const rubrica = new OpenAPIHono()
+
+rubrica.openapi(removeRubricaHolisticaRoute, async c => {
+  const item = c.req.valid('param')
+  try {
+    await db.$transaction(async prisma => {
+      return await removeRubricaHolistica({ item, prisma })
+    })
+    return c.json({ message: 'Rubrica eliminada correctamente' }, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
+
+rubrica.openapi(removeRubricaAnaliticaRoute, async c => {
+  const item = c.req.valid('param')
+  try {
+    await db.$transaction(async prisma => {
+      return await removeRubricaAnalitica({ item, prisma })
+    })
+    return c.json({ message: 'Rubrica eliminada correctamente' }, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
+
+rubrica.openapi(editRubricaHolisticaRoute, async c => {
+  const item = c.req.valid('json')
+  const { id } = c.req.valid('param')
+  try {
+    const rubrica = await db.$transaction(async prisma => {
+      return await editRubricaHolistica({ item, prisma, id })
+    })
+    return c.json(rubrica, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
+
+rubrica.openapi(editRubricaAnaliticaRoute, async c => {
+  const item = c.req.valid('json')
+  const { id } = c.req.valid('param')
+  try {
+    const rubrica = await db.$transaction(async prisma => {
+      return await editRubricaAnalitica({ item, prisma, id })
+    })
+    return c.json(rubrica, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
 
 rubrica.openapi(createRubricaHolisticaRoute, async c => {
   const item = c.req.valid('json')

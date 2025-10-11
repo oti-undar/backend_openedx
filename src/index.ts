@@ -1,4 +1,3 @@
-import { serve } from '@hono/node-server'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { docUi, openapiInfo } from './lib/doc-ui.js'
 import examen from './routes/examen/index.js'
@@ -11,30 +10,9 @@ import apiOpenEdx from './routes/api_open_edx/index.js'
 import ejecucion_examen from './routes/ejecucion-examen/index.js'
 import { createServer } from 'http'
 import { Server as SocketIOServer } from 'socket.io'
-import type { Readable } from 'stream'
 import { db } from './db/db.js'
 import { createEjecucionExamen } from './routes/ejecucion-examen/utils/create-ejecucion-examen.js'
-import { updatePreguntaEjecucionExamen } from './routes/ejecucion-examen/utils/update-pregunta-ejecucion-examen.js'
-import { updateEjecucionExamen } from './routes/ejecucion-examen/utils/update-ejecucion-examen.js'
-
-const app = new OpenAPIHono()
-app.use('*', cors())
-
-app.get('/', c => {
-  return c.text('Hello Hono!')
-})
-
-app.route('/examen', examen)
-app.route('/rubrica', rubrica)
-app.route('/curso', curso)
-app.route('/state', state)
-app.route('/api_open_edx', apiOpenEdx)
-app.route('/ejecucion_examen', ejecucion_examen)
-
-app.get('/ui', c => c.html(docUi['Stoplight Elements']))
-app.doc('/doc', openapiInfo)
-
-app.use('*', serveStatic({ root: './public' }))
+import { StateType } from '@prisma/client'
 
 interface NodeRequestInit extends RequestInit {
   duplex?: 'half'
@@ -142,76 +120,96 @@ io.on('connection', socket => {
     }
 
     if (event === 'examen-siguiente-pregunta') {
-      await db.$transaction(async prisma => {
-        const { examen_id, siguiente_pregunta_id } = data
-        const ejecucionesExamen = await prisma.ejecucionExamen.findMany({
-          where: {
-            examen_id,
-          },
-          select: {
-            user_id: true,
-            pregunta_ejecucion_actual_id: true,
-            pregunta_ejecucion_actual: {
-              select: {
-                respuesta_id: true,
-              },
-            },
-          },
-        })
-        const preguntas_ejecucion_actual =
-          ejecucionesExamen?.map(ejecucion => ({
-            pregunta_ejecucion_actual_id:
-              ejecucion.pregunta_ejecucion_actual_id,
-            respuesta_id: ejecucion.pregunta_ejecucion_actual?.respuesta_id,
-            user_id: ejecucion.user_id,
-          })) || []
-
-        const ejecuciones = await Promise.all(
-          preguntas_ejecucion_actual.map(
-            async ({ pregunta_ejecucion_actual_id, respuesta_id, user_id }) => {
-              if (!pregunta_ejecucion_actual_id) return
-              const ejecucion = await updatePreguntaEjecucionExamen({
-                item: {
-                  final: new Date(),
-                  respuesta_id: respuesta_id || null,
-                  nueva_pregunta_actual: siguiente_pregunta_id
-                    ? {
-                        examen_id,
-                        pregunta_id: siguiente_pregunta_id,
-                        user_id,
-                      }
-                    : undefined,
-                },
-                pregunta_ejecucion_actual_id,
-                prisma,
-              })
-
-              return {
-                alumno_id: user_id,
-                pregunta_ejecucion_actual_id:
-                  ejecucion.pregunta_ejecucion_actual_id,
-              }
-            }
-          )
-        )
-
-        data.ejecucionesExamen = ejecuciones
-      })
+      const { examen_id, siguiente_pregunta_id } = data
+      const ejecuciones = await siguientePreguntaExamen(
+        examen_id,
+        siguiente_pregunta_id
+      )
+      data.ejecucionesExamen = ejecuciones
     }
 
     if (event === 'finalizar-examen') {
-      await db.$transaction(async prisma => {
-        const { examen_id } = data
-        await prisma.ejecucionExamen.updateMany({
-          where: { examen_id },
-          data: { fin_examen: new Date() },
-        })
-      })
+      const { examen_id } = data
+      finalizarExamen(examen_id)
     }
 
     io.to(room).emit(event, data)
   })
 })
+export { io }
+
+type Job = {
+  id: string
+  timeout: NodeJS.Timeout
+  runAt: Date
+  callback: () => void
+}
+
+export const jobs = new Map<string, Job>()
+
+import { createJob, listJobs } from './helpers/jobs.js'
+import {
+  empezarJobExamen,
+  finalizarJobExamen,
+} from './routes/examen/helpers/finalizar-job-examen.js'
+import { siguientePreguntaExamen } from './routes/examen/helpers/siguiente-pregunta-examen.js'
+import { finalizarExamen } from './routes/examen/helpers/finalizar-examen.js'
+;(async () => {
+  const examenes = await db.examen.findMany({
+    where: {
+      state: {
+        OR: [{ name: StateType.Disponible }, { name: StateType.Activo }],
+      },
+      OR: [
+        {
+          final_examen: {
+            not: null,
+          },
+        },
+        {
+          inicio_examen: {
+            not: null,
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      final_examen: true,
+      inicio_examen: true,
+    },
+  })
+
+  examenes.forEach(examen => {
+    if (examen.final_examen)
+      createJob(examen.id, examen.final_examen, async () => {
+        finalizarJobExamen(examen.id)
+      })
+    if (examen.inicio_examen)
+      createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
+        empezarJobExamen(examen.id)
+      })
+  })
+})()
+
+const app = new OpenAPIHono()
+app.use('*', cors())
+
+app.get('/', c => {
+  return c.text('Hello Hono!')
+})
+
+app.route('/examen', examen)
+app.route('/rubrica', rubrica)
+app.route('/curso', curso)
+app.route('/state', state)
+app.route('/api_open_edx', apiOpenEdx)
+app.route('/ejecucion_examen', ejecucion_examen)
+
+app.get('/ui', c => c.html(docUi['Stoplight Elements']))
+app.doc('/doc', openapiInfo)
+
+app.use('*', serveStatic({ root: './public' }))
 
 server.listen(3000, () => {
   console.log('Server running at http://localhost:3000')

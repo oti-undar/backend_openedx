@@ -9,7 +9,7 @@ const createEjecucionExamenRouteSchema = EjecucionExamenSchema.pick({
   user_id: true,
   examen_id: true,
 }).extend({
-  pregunta_id: z.string().uuid(),
+  pregunta_id: z.string().cuid(),
 })
 
 export type CreateEjecucionExamenRouteSchema = z.infer<

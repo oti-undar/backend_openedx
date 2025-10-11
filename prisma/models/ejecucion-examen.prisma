@@ -1,11 +1,11 @@
 model EjecucionExamen {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     user_id Int
     user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     examen_id String
-    examen    Examen @relation(fields: [examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    examen    Examen @relation(fields: [examen_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     pregunta_ejecucion_actual_id String?                   @unique
     pregunta_ejecucion_actual    PreguntasEjecucionExamen? @relation("pregunta_ejecucion_actual", fields: [pregunta_ejecucion_actual_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -22,7 +22,7 @@ model EjecucionExamen {
 }
 
 model PreguntasEjecucionExamen {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     ejecucion_examen_id String
     ejecucion_examen    EjecucionExamen @relation("preguntas_resueltas", fields: [ejecucion_examen_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

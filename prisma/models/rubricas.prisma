@@ -1,6 +1,9 @@
 model RubricaHolistica {
-    id   String @id @default(cuid())
-    name String
+    id           String @id @default(cuid())
+    name         String
+    competencias String @db.Text
+    capacidades  String @db.Text
+    desempenos   String @db.Text
 
     user_id Int
     user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -16,8 +19,11 @@ model RubricaHolistica {
 }
 
 model RubricaAnalitica {
-    id   String @id @default(cuid())
-    name String
+    id           String @id @default(cuid())
+    name         String
+    competencias String @db.Text
+    capacidades  String @db.Text
+    desempenos   String @db.Text
 
     user_id Int
     user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

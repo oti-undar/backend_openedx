@@ -49,9 +49,9 @@ export const RespuestaScalarFieldEnumSchema = z.enum(['id','respuesta','img','vi
 
 export const HistorialScalarFieldEnumSchema = z.enum(['id','user_id','examen_id','puntaje','created_at','updated_at','deleted_at']);
 
-export const RubricaHolisticaScalarFieldEnumSchema = z.enum(['id','name','user_id','created_at','updated_at','deleted_at']);
+export const RubricaHolisticaScalarFieldEnumSchema = z.enum(['id','name','competencias','capacidades','desempenos','user_id','created_at','updated_at','deleted_at']);
 
-export const RubricaAnaliticaScalarFieldEnumSchema = z.enum(['id','name','user_id','created_at','updated_at','deleted_at']);
+export const RubricaAnaliticaScalarFieldEnumSchema = z.enum(['id','name','competencias','capacidades','desempenos','user_id','created_at','updated_at','deleted_at']);
 
 export const IndicadoresScalarFieldEnumSchema = z.enum(['id','name','rubrica_analitica_id','created_at','updated_at','deleted_at']);
 
@@ -81,9 +81,9 @@ export const RespuestaOrderByRelevanceFieldEnumSchema = z.enum(['id','respuesta'
 
 export const HistorialOrderByRelevanceFieldEnumSchema = z.enum(['id','examen_id']);
 
-export const RubricaHolisticaOrderByRelevanceFieldEnumSchema = z.enum(['id','name']);
+export const RubricaHolisticaOrderByRelevanceFieldEnumSchema = z.enum(['id','name','competencias','capacidades','desempenos']);
 
-export const RubricaAnaliticaOrderByRelevanceFieldEnumSchema = z.enum(['id','name']);
+export const RubricaAnaliticaOrderByRelevanceFieldEnumSchema = z.enum(['id','name','competencias','capacidades','desempenos']);
 
 export const IndicadoresOrderByRelevanceFieldEnumSchema = z.enum(['name','rubrica_analitica_id']);
 
@@ -138,7 +138,7 @@ export type UsuarioCurso = z.infer<typeof UsuarioCursoSchema>
 /////////////////////////////////////////
 
 export const EjecucionExamenSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   user_id: z.number().int(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().nullable(),
@@ -155,7 +155,7 @@ export type EjecucionExamen = z.infer<typeof EjecucionExamenSchema>
 /////////////////////////////////////////
 
 export const PreguntasEjecucionExamenSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   respuesta_id: z.string().nullable(),
@@ -174,7 +174,7 @@ export type PreguntasEjecucionExamen = z.infer<typeof PreguntasEjecucionExamenSc
 
 export const ExamenSchema = z.object({
   tipo_examen: TipoExamenSchema,
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   title: z.string(),
   description: z.string().nullable(),
   img: z.string().nullable(),
@@ -201,7 +201,7 @@ export type Examen = z.infer<typeof ExamenSchema>
 /////////////////////////////////////////
 
 export const PreguntaSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   title: z.string(),
   description: z.string().nullable(),
   img: z.string().nullable(),
@@ -219,7 +219,7 @@ export type Pregunta = z.infer<typeof PreguntaSchema>
 /////////////////////////////////////////
 
 export const RespuestaSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   respuesta: z.string(),
   img: z.string().nullable(),
   video: z.string().nullable(),
@@ -235,7 +235,7 @@ export type Respuesta = z.infer<typeof RespuestaSchema>
 /////////////////////////////////////////
 
 export const HistorialSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   user_id: z.number().int(),
   examen_id: z.string(),
   puntaje: z.number().int(),
@@ -253,6 +253,9 @@ export type Historial = z.infer<typeof HistorialSchema>
 export const RubricaHolisticaSchema = z.object({
   id: z.string().cuid(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
@@ -268,6 +271,9 @@ export type RubricaHolistica = z.infer<typeof RubricaHolisticaSchema>
 export const RubricaAnaliticaSchema = z.object({
   id: z.string().cuid(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
@@ -669,6 +675,9 @@ export const RubricaHolisticaCountOutputTypeSelectSchema: z.ZodType<Prisma.Rubri
 export const RubricaHolisticaSelectSchema: z.ZodType<Prisma.RubricaHolisticaSelect> = z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
+  competencias: z.boolean().optional(),
+  capacidades: z.boolean().optional(),
+  desempenos: z.boolean().optional(),
   user_id: z.boolean().optional(),
   created_at: z.boolean().optional(),
   updated_at: z.boolean().optional(),
@@ -706,6 +715,9 @@ export const RubricaAnaliticaCountOutputTypeSelectSchema: z.ZodType<Prisma.Rubri
 export const RubricaAnaliticaSelectSchema: z.ZodType<Prisma.RubricaAnaliticaSelect> = z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
+  competencias: z.boolean().optional(),
+  capacidades: z.boolean().optional(),
+  desempenos: z.boolean().optional(),
   user_id: z.boolean().optional(),
   created_at: z.boolean().optional(),
   updated_at: z.boolean().optional(),
@@ -1047,20 +1059,20 @@ export const EjecucionExamenOrderByWithRelationInputSchema: z.ZodType<Prisma.Eje
 
 export const EjecucionExamenWhereUniqueInputSchema: z.ZodType<Prisma.EjecucionExamenWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
     pregunta_ejecucion_actual_id: z.string(),
     user_id_examen_id: z.lazy(() => EjecucionExamenUser_idExamen_idCompoundUniqueInputSchema)
   }),
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
     pregunta_ejecucion_actual_id: z.string(),
   }),
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
     user_id_examen_id: z.lazy(() => EjecucionExamenUser_idExamen_idCompoundUniqueInputSchema),
   }),
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
   }),
   z.object({
     pregunta_ejecucion_actual_id: z.string(),
@@ -1074,7 +1086,7 @@ export const EjecucionExamenWhereUniqueInputSchema: z.ZodType<Prisma.EjecucionEx
   }),
 ])
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   pregunta_ejecucion_actual_id: z.string().optional(),
   user_id_examen_id: z.lazy(() => EjecucionExamenUser_idExamen_idCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => EjecucionExamenWhereInputSchema),z.lazy(() => EjecucionExamenWhereInputSchema).array() ]).optional(),
@@ -1160,18 +1172,18 @@ export const PreguntasEjecucionExamenOrderByWithRelationInputSchema: z.ZodType<P
 
 export const PreguntasEjecucionExamenWhereUniqueInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
     pregunta_id_ejecucion_examen_id: z.lazy(() => PreguntasEjecucionExamenPregunta_idEjecucion_examen_idCompoundUniqueInputSchema)
   }),
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
   }),
   z.object({
     pregunta_id_ejecucion_examen_id: z.lazy(() => PreguntasEjecucionExamenPregunta_idEjecucion_examen_idCompoundUniqueInputSchema),
   }),
 ])
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   pregunta_id_ejecucion_examen_id: z.lazy(() => PreguntasEjecucionExamenPregunta_idEjecucion_examen_idCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => PreguntasEjecucionExamenWhereInputSchema),z.lazy(() => PreguntasEjecucionExamenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PreguntasEjecucionExamenWhereInputSchema).array().optional(),
@@ -1288,18 +1300,18 @@ export const ExamenOrderByWithRelationInputSchema: z.ZodType<Prisma.ExamenOrderB
 
 export const ExamenWhereUniqueInputSchema: z.ZodType<Prisma.ExamenWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
     pregunta_actual_sync_id: z.string()
   }),
   z.object({
-    id: z.string().uuid(),
+    id: z.string().cuid(),
   }),
   z.object({
     pregunta_actual_sync_id: z.string(),
   }),
 ])
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   pregunta_actual_sync_id: z.string().optional(),
   AND: z.union([ z.lazy(() => ExamenWhereInputSchema),z.lazy(() => ExamenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => ExamenWhereInputSchema).array().optional(),
@@ -1423,10 +1435,10 @@ export const PreguntaOrderByWithRelationInputSchema: z.ZodType<Prisma.PreguntaOr
 }).strict();
 
 export const PreguntaWhereUniqueInputSchema: z.ZodType<Prisma.PreguntaWhereUniqueInput> = z.object({
-  id: z.string().uuid()
+  id: z.string().cuid()
 })
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   AND: z.union([ z.lazy(() => PreguntaWhereInputSchema),z.lazy(() => PreguntaWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => PreguntaWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => PreguntaWhereInputSchema),z.lazy(() => PreguntaWhereInputSchema).array() ]).optional(),
@@ -1506,10 +1518,10 @@ export const RespuestaOrderByWithRelationInputSchema: z.ZodType<Prisma.Respuesta
 }).strict();
 
 export const RespuestaWhereUniqueInputSchema: z.ZodType<Prisma.RespuestaWhereUniqueInput> = z.object({
-  id: z.string().uuid()
+  id: z.string().cuid()
 })
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   AND: z.union([ z.lazy(() => RespuestaWhereInputSchema),z.lazy(() => RespuestaWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => RespuestaWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => RespuestaWhereInputSchema),z.lazy(() => RespuestaWhereInputSchema).array() ]).optional(),
@@ -1578,10 +1590,10 @@ export const HistorialOrderByWithRelationInputSchema: z.ZodType<Prisma.Historial
 }).strict();
 
 export const HistorialWhereUniqueInputSchema: z.ZodType<Prisma.HistorialWhereUniqueInput> = z.object({
-  id: z.string().uuid()
+  id: z.string().cuid()
 })
 .and(z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   AND: z.union([ z.lazy(() => HistorialWhereInputSchema),z.lazy(() => HistorialWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => HistorialWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => HistorialWhereInputSchema),z.lazy(() => HistorialWhereInputSchema).array() ]).optional(),
@@ -1629,6 +1641,9 @@ export const RubricaHolisticaWhereInputSchema: z.ZodType<Prisma.RubricaHolistica
   NOT: z.union([ z.lazy(() => RubricaHolisticaWhereInputSchema),z.lazy(() => RubricaHolisticaWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1641,6 +1656,9 @@ export const RubricaHolisticaWhereInputSchema: z.ZodType<Prisma.RubricaHolistica
 export const RubricaHolisticaOrderByWithRelationInputSchema: z.ZodType<Prisma.RubricaHolisticaOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -1670,6 +1688,9 @@ export const RubricaHolisticaWhereUniqueInputSchema: z.ZodType<Prisma.RubricaHol
   OR: z.lazy(() => RubricaHolisticaWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => RubricaHolisticaWhereInputSchema),z.lazy(() => RubricaHolisticaWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1682,6 +1703,9 @@ export const RubricaHolisticaWhereUniqueInputSchema: z.ZodType<Prisma.RubricaHol
 export const RubricaHolisticaOrderByWithAggregationInputSchema: z.ZodType<Prisma.RubricaHolisticaOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -1699,6 +1723,9 @@ export const RubricaHolisticaScalarWhereWithAggregatesInputSchema: z.ZodType<Pri
   NOT: z.union([ z.lazy(() => RubricaHolisticaScalarWhereWithAggregatesInputSchema),z.lazy(() => RubricaHolisticaScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
@@ -1711,6 +1738,9 @@ export const RubricaAnaliticaWhereInputSchema: z.ZodType<Prisma.RubricaAnalitica
   NOT: z.union([ z.lazy(() => RubricaAnaliticaWhereInputSchema),z.lazy(() => RubricaAnaliticaWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1723,6 +1753,9 @@ export const RubricaAnaliticaWhereInputSchema: z.ZodType<Prisma.RubricaAnalitica
 export const RubricaAnaliticaOrderByWithRelationInputSchema: z.ZodType<Prisma.RubricaAnaliticaOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -1752,6 +1785,9 @@ export const RubricaAnaliticaWhereUniqueInputSchema: z.ZodType<Prisma.RubricaAna
   OR: z.lazy(() => RubricaAnaliticaWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => RubricaAnaliticaWhereInputSchema),z.lazy(() => RubricaAnaliticaWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -1764,6 +1800,9 @@ export const RubricaAnaliticaWhereUniqueInputSchema: z.ZodType<Prisma.RubricaAna
 export const RubricaAnaliticaOrderByWithAggregationInputSchema: z.ZodType<Prisma.RubricaAnaliticaOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -1781,6 +1820,9 @@ export const RubricaAnaliticaScalarWhereWithAggregatesInputSchema: z.ZodType<Pri
   NOT: z.union([ z.lazy(() => RubricaAnaliticaScalarWhereWithAggregatesInputSchema),z.lazy(() => RubricaAnaliticaScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
@@ -2270,7 +2312,7 @@ export const UsuarioCursoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Usuari
 }).strict();
 
 export const EjecucionExamenCreateInputSchema: z.ZodType<Prisma.EjecucionExamenCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   fin_examen: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2282,7 +2324,7 @@ export const EjecucionExamenCreateInputSchema: z.ZodType<Prisma.EjecucionExamenC
 }).strict();
 
 export const EjecucionExamenUncheckedCreateInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
@@ -2294,7 +2336,7 @@ export const EjecucionExamenUncheckedCreateInputSchema: z.ZodType<Prisma.Ejecuci
 }).strict();
 
 export const EjecucionExamenUpdateInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2306,7 +2348,7 @@ export const EjecucionExamenUpdateInputSchema: z.ZodType<Prisma.EjecucionExamenU
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2318,7 +2360,7 @@ export const EjecucionExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.Ejecuci
 }).strict();
 
 export const EjecucionExamenCreateManyInputSchema: z.ZodType<Prisma.EjecucionExamenCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
@@ -2329,7 +2371,7 @@ export const EjecucionExamenCreateManyInputSchema: z.ZodType<Prisma.EjecucionExa
 }).strict();
 
 export const EjecucionExamenUpdateManyMutationInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2337,7 +2379,7 @@ export const EjecucionExamenUpdateManyMutationInputSchema: z.ZodType<Prisma.Ejec
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2348,7 +2390,7 @@ export const EjecucionExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Eje
 }).strict();
 
 export const PreguntasEjecucionExamenCreateInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -2361,7 +2403,7 @@ export const PreguntasEjecucionExamenCreateInputSchema: z.ZodType<Prisma.Pregunt
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedCreateInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
@@ -2374,7 +2416,7 @@ export const PreguntasEjecucionExamenUncheckedCreateInputSchema: z.ZodType<Prism
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2387,7 +2429,7 @@ export const PreguntasEjecucionExamenUpdateInputSchema: z.ZodType<Prisma.Pregunt
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2400,7 +2442,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateInputSchema: z.ZodType<Prism
 }).strict();
 
 export const PreguntasEjecucionExamenCreateManyInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
@@ -2412,7 +2454,7 @@ export const PreguntasEjecucionExamenCreateManyInputSchema: z.ZodType<Prisma.Pre
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateManyMutationInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2421,7 +2463,7 @@ export const PreguntasEjecucionExamenUpdateManyMutationInputSchema: z.ZodType<Pr
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2433,7 +2475,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyInputSchema: z.ZodType<P
 }).strict();
 
 export const ExamenCreateInputSchema: z.ZodType<Prisma.ExamenCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2458,7 +2500,7 @@ export const ExamenCreateInputSchema: z.ZodType<Prisma.ExamenCreateInput> = z.ob
 }).strict();
 
 export const ExamenUncheckedCreateInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2483,7 +2525,7 @@ export const ExamenUncheckedCreateInputSchema: z.ZodType<Prisma.ExamenUncheckedC
 }).strict();
 
 export const ExamenUpdateInputSchema: z.ZodType<Prisma.ExamenUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2508,7 +2550,7 @@ export const ExamenUpdateInputSchema: z.ZodType<Prisma.ExamenUpdateInput> = z.ob
 }).strict();
 
 export const ExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2533,7 +2575,7 @@ export const ExamenUncheckedUpdateInputSchema: z.ZodType<Prisma.ExamenUncheckedU
 }).strict();
 
 export const ExamenCreateManyInputSchema: z.ZodType<Prisma.ExamenCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2555,7 +2597,7 @@ export const ExamenCreateManyInputSchema: z.ZodType<Prisma.ExamenCreateManyInput
 }).strict();
 
 export const ExamenUpdateManyMutationInputSchema: z.ZodType<Prisma.ExamenUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2571,7 +2613,7 @@ export const ExamenUpdateManyMutationInputSchema: z.ZodType<Prisma.ExamenUpdateM
 }).strict();
 
 export const ExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2593,7 +2635,7 @@ export const ExamenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ExamenUnchec
 }).strict();
 
 export const PreguntaCreateInputSchema: z.ZodType<Prisma.PreguntaCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2609,7 +2651,7 @@ export const PreguntaCreateInputSchema: z.ZodType<Prisma.PreguntaCreateInput> = 
 }).strict();
 
 export const PreguntaUncheckedCreateInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2625,7 +2667,7 @@ export const PreguntaUncheckedCreateInputSchema: z.ZodType<Prisma.PreguntaUnchec
 }).strict();
 
 export const PreguntaUpdateInputSchema: z.ZodType<Prisma.PreguntaUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2641,7 +2683,7 @@ export const PreguntaUpdateInputSchema: z.ZodType<Prisma.PreguntaUpdateInput> = 
 }).strict();
 
 export const PreguntaUncheckedUpdateInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2657,7 +2699,7 @@ export const PreguntaUncheckedUpdateInputSchema: z.ZodType<Prisma.PreguntaUnchec
 }).strict();
 
 export const PreguntaCreateManyInputSchema: z.ZodType<Prisma.PreguntaCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -2669,7 +2711,7 @@ export const PreguntaCreateManyInputSchema: z.ZodType<Prisma.PreguntaCreateManyI
 }).strict();
 
 export const PreguntaUpdateManyMutationInputSchema: z.ZodType<Prisma.PreguntaUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2680,7 +2722,7 @@ export const PreguntaUpdateManyMutationInputSchema: z.ZodType<Prisma.PreguntaUpd
 }).strict();
 
 export const PreguntaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2692,7 +2734,7 @@ export const PreguntaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.PreguntaUn
 }).strict();
 
 export const RespuestaCreateInputSchema: z.ZodType<Prisma.RespuestaCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -2703,7 +2745,7 @@ export const RespuestaCreateInputSchema: z.ZodType<Prisma.RespuestaCreateInput> 
 }).strict();
 
 export const RespuestaUncheckedCreateInputSchema: z.ZodType<Prisma.RespuestaUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -2714,7 +2756,7 @@ export const RespuestaUncheckedCreateInputSchema: z.ZodType<Prisma.RespuestaUnch
 }).strict();
 
 export const RespuestaUpdateInputSchema: z.ZodType<Prisma.RespuestaUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2725,7 +2767,7 @@ export const RespuestaUpdateInputSchema: z.ZodType<Prisma.RespuestaUpdateInput> 
 }).strict();
 
 export const RespuestaUncheckedUpdateInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2736,7 +2778,7 @@ export const RespuestaUncheckedUpdateInputSchema: z.ZodType<Prisma.RespuestaUnch
 }).strict();
 
 export const RespuestaCreateManyInputSchema: z.ZodType<Prisma.RespuestaCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -2746,7 +2788,7 @@ export const RespuestaCreateManyInputSchema: z.ZodType<Prisma.RespuestaCreateMan
 }).strict();
 
 export const RespuestaUpdateManyMutationInputSchema: z.ZodType<Prisma.RespuestaUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2755,7 +2797,7 @@ export const RespuestaUpdateManyMutationInputSchema: z.ZodType<Prisma.RespuestaU
 }).strict();
 
 export const RespuestaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2765,7 +2807,7 @@ export const RespuestaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Respuesta
 }).strict();
 
 export const HistorialCreateInputSchema: z.ZodType<Prisma.HistorialCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2775,7 +2817,7 @@ export const HistorialCreateInputSchema: z.ZodType<Prisma.HistorialCreateInput> 
 }).strict();
 
 export const HistorialUncheckedCreateInputSchema: z.ZodType<Prisma.HistorialUncheckedCreateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   puntaje: z.number().int(),
@@ -2785,7 +2827,7 @@ export const HistorialUncheckedCreateInputSchema: z.ZodType<Prisma.HistorialUnch
 }).strict();
 
 export const HistorialUpdateInputSchema: z.ZodType<Prisma.HistorialUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2795,7 +2837,7 @@ export const HistorialUpdateInputSchema: z.ZodType<Prisma.HistorialUpdateInput> 
 }).strict();
 
 export const HistorialUncheckedUpdateInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2805,7 +2847,7 @@ export const HistorialUncheckedUpdateInputSchema: z.ZodType<Prisma.HistorialUnch
 }).strict();
 
 export const HistorialCreateManyInputSchema: z.ZodType<Prisma.HistorialCreateManyInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   puntaje: z.number().int(),
@@ -2815,7 +2857,7 @@ export const HistorialCreateManyInputSchema: z.ZodType<Prisma.HistorialCreateMan
 }).strict();
 
 export const HistorialUpdateManyMutationInputSchema: z.ZodType<Prisma.HistorialUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2823,7 +2865,7 @@ export const HistorialUpdateManyMutationInputSchema: z.ZodType<Prisma.HistorialU
 }).strict();
 
 export const HistorialUncheckedUpdateManyInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2835,6 +2877,9 @@ export const HistorialUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Historial
 export const RubricaHolisticaCreateInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -2846,6 +2891,9 @@ export const RubricaHolisticaCreateInputSchema: z.ZodType<Prisma.RubricaHolistic
 export const RubricaHolisticaUncheckedCreateInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2857,6 +2905,9 @@ export const RubricaHolisticaUncheckedCreateInputSchema: z.ZodType<Prisma.Rubric
 export const RubricaHolisticaUpdateInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2868,6 +2919,9 @@ export const RubricaHolisticaUpdateInputSchema: z.ZodType<Prisma.RubricaHolistic
 export const RubricaHolisticaUncheckedUpdateInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2879,6 +2933,9 @@ export const RubricaHolisticaUncheckedUpdateInputSchema: z.ZodType<Prisma.Rubric
 export const RubricaHolisticaCreateManyInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2888,6 +2945,9 @@ export const RubricaHolisticaCreateManyInputSchema: z.ZodType<Prisma.RubricaHoli
 export const RubricaHolisticaUpdateManyMutationInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2896,6 +2956,9 @@ export const RubricaHolisticaUpdateManyMutationInputSchema: z.ZodType<Prisma.Rub
 export const RubricaHolisticaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2905,6 +2968,9 @@ export const RubricaHolisticaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Ru
 export const RubricaAnaliticaCreateInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -2916,6 +2982,9 @@ export const RubricaAnaliticaCreateInputSchema: z.ZodType<Prisma.RubricaAnalitic
 export const RubricaAnaliticaUncheckedCreateInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedCreateInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2927,6 +2996,9 @@ export const RubricaAnaliticaUncheckedCreateInputSchema: z.ZodType<Prisma.Rubric
 export const RubricaAnaliticaUpdateInputSchema: z.ZodType<Prisma.RubricaAnaliticaUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2938,6 +3010,9 @@ export const RubricaAnaliticaUpdateInputSchema: z.ZodType<Prisma.RubricaAnalitic
 export const RubricaAnaliticaUncheckedUpdateInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2949,6 +3024,9 @@ export const RubricaAnaliticaUncheckedUpdateInputSchema: z.ZodType<Prisma.Rubric
 export const RubricaAnaliticaCreateManyInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -2958,6 +3036,9 @@ export const RubricaAnaliticaCreateManyInputSchema: z.ZodType<Prisma.RubricaAnal
 export const RubricaAnaliticaUpdateManyMutationInputSchema: z.ZodType<Prisma.RubricaAnaliticaUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2966,6 +3047,9 @@ export const RubricaAnaliticaUpdateManyMutationInputSchema: z.ZodType<Prisma.Rub
 export const RubricaAnaliticaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4045,6 +4129,9 @@ export const RubricaHolisticaNameUser_idCompoundUniqueInputSchema: z.ZodType<Pri
 export const RubricaHolisticaCountOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaHolisticaCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -4058,6 +4145,9 @@ export const RubricaHolisticaAvgOrderByAggregateInputSchema: z.ZodType<Prisma.Ru
 export const RubricaHolisticaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaHolisticaMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -4067,6 +4157,9 @@ export const RubricaHolisticaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Ru
 export const RubricaHolisticaMinOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaHolisticaMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -4091,6 +4184,9 @@ export const RubricaAnaliticaNameUser_idCompoundUniqueInputSchema: z.ZodType<Pri
 export const RubricaAnaliticaCountOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaAnaliticaCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -4104,6 +4200,9 @@ export const RubricaAnaliticaAvgOrderByAggregateInputSchema: z.ZodType<Prisma.Ru
 export const RubricaAnaliticaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaAnaliticaMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -4113,6 +4212,9 @@ export const RubricaAnaliticaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Ru
 export const RubricaAnaliticaMinOrderByAggregateInputSchema: z.ZodType<Prisma.RubricaAnaliticaMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  competencias: z.lazy(() => SortOrderSchema).optional(),
+  capacidades: z.lazy(() => SortOrderSchema).optional(),
+  desempenos: z.lazy(() => SortOrderSchema).optional(),
   user_id: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
@@ -6061,7 +6163,7 @@ export const NestedEnumStateTypeWithAggregatesFilterSchema: z.ZodType<Prisma.Nes
 }).strict();
 
 export const ExamenCreateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenCreateWithoutCursoInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6085,7 +6187,7 @@ export const ExamenCreateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenCreateW
 }).strict();
 
 export const ExamenUncheckedCreateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutCursoInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6400,7 +6502,7 @@ export const UserCreateOrConnectWithoutExamenes_resueltosInputSchema: z.ZodType<
 }).strict();
 
 export const ExamenCreateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenCreateWithoutEjecucionesInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6424,7 +6526,7 @@ export const ExamenCreateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenC
 }).strict();
 
 export const ExamenUncheckedCreateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutEjecucionesInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6453,7 +6555,7 @@ export const ExamenCreateOrConnectWithoutEjecucionesInputSchema: z.ZodType<Prism
 }).strict();
 
 export const PreguntasEjecucionExamenCreateWithoutEjecucion_actual_deInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateWithoutEjecucion_actual_deInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -6465,7 +6567,7 @@ export const PreguntasEjecucionExamenCreateWithoutEjecucion_actual_deInputSchema
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_actual_deInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_actual_deInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
@@ -6482,7 +6584,7 @@ export const PreguntasEjecucionExamenCreateOrConnectWithoutEjecucion_actual_deIn
 }).strict();
 
 export const PreguntasEjecucionExamenCreateWithoutEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateWithoutEjecucion_examenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -6494,7 +6596,7 @@ export const PreguntasEjecucionExamenCreateWithoutEjecucion_examenInputSchema: z
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_examenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   pregunta_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
@@ -6575,7 +6677,7 @@ export const ExamenUpdateToOneWithWhereWithoutEjecucionesInputSchema: z.ZodType<
 }).strict();
 
 export const ExamenUpdateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutEjecucionesInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6599,7 +6701,7 @@ export const ExamenUpdateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenU
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutEjecucionesInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutEjecucionesInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6634,7 +6736,7 @@ export const PreguntasEjecucionExamenUpdateToOneWithWhereWithoutEjecucion_actual
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateWithoutEjecucion_actual_deInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateWithoutEjecucion_actual_deInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6646,7 +6748,7 @@ export const PreguntasEjecucionExamenUpdateWithoutEjecucion_actual_deInputSchema
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_actual_deInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_actual_deInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6689,7 +6791,7 @@ export const PreguntasEjecucionExamenScalarWhereInputSchema: z.ZodType<Prisma.Pr
 }).strict();
 
 export const EjecucionExamenCreateWithoutPreguntas_resueltasInputSchema: z.ZodType<Prisma.EjecucionExamenCreateWithoutPreguntas_resueltasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   fin_examen: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -6700,7 +6802,7 @@ export const EjecucionExamenCreateWithoutPreguntas_resueltasInputSchema: z.ZodTy
 }).strict();
 
 export const EjecucionExamenUncheckedCreateWithoutPreguntas_resueltasInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedCreateWithoutPreguntas_resueltasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
@@ -6716,7 +6818,7 @@ export const EjecucionExamenCreateOrConnectWithoutPreguntas_resueltasInputSchema
 }).strict();
 
 export const PreguntaCreateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutPreguntasEjecucionExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6731,7 +6833,7 @@ export const PreguntaCreateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType
 }).strict();
 
 export const PreguntaUncheckedCreateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutPreguntasEjecucionExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -6751,7 +6853,7 @@ export const PreguntaCreateOrConnectWithoutPreguntasEjecucionExamenInputSchema: 
 }).strict();
 
 export const RespuestaCreateWithoutRespuestasEjecucionExamenInputSchema: z.ZodType<Prisma.RespuestaCreateWithoutRespuestasEjecucionExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -6761,7 +6863,7 @@ export const RespuestaCreateWithoutRespuestasEjecucionExamenInputSchema: z.ZodTy
 }).strict();
 
 export const RespuestaUncheckedCreateWithoutRespuestasEjecucionExamenInputSchema: z.ZodType<Prisma.RespuestaUncheckedCreateWithoutRespuestasEjecucionExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -6776,7 +6878,7 @@ export const RespuestaCreateOrConnectWithoutRespuestasEjecucionExamenInputSchema
 }).strict();
 
 export const EjecucionExamenCreateWithoutPregunta_ejecucion_actualInputSchema: z.ZodType<Prisma.EjecucionExamenCreateWithoutPregunta_ejecucion_actualInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   fin_examen: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -6787,7 +6889,7 @@ export const EjecucionExamenCreateWithoutPregunta_ejecucion_actualInputSchema: z
 }).strict();
 
 export const EjecucionExamenUncheckedCreateWithoutPregunta_ejecucion_actualInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedCreateWithoutPregunta_ejecucion_actualInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   examen_id: z.string(),
   fin_examen: z.coerce.date().optional().nullable(),
@@ -6814,7 +6916,7 @@ export const EjecucionExamenUpdateToOneWithWhereWithoutPreguntas_resueltasInputS
 }).strict();
 
 export const EjecucionExamenUpdateWithoutPreguntas_resueltasInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateWithoutPreguntas_resueltasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6825,7 +6927,7 @@ export const EjecucionExamenUpdateWithoutPreguntas_resueltasInputSchema: z.ZodTy
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateWithoutPreguntas_resueltasInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateWithoutPreguntas_resueltasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6847,7 +6949,7 @@ export const PreguntaUpdateToOneWithWhereWithoutPreguntasEjecucionExamenInputSch
 }).strict();
 
 export const PreguntaUpdateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutPreguntasEjecucionExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6862,7 +6964,7 @@ export const PreguntaUpdateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType
 }).strict();
 
 export const PreguntaUncheckedUpdateWithoutPreguntasEjecucionExamenInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutPreguntasEjecucionExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6888,7 +6990,7 @@ export const RespuestaUpdateToOneWithWhereWithoutRespuestasEjecucionExamenInputS
 }).strict();
 
 export const RespuestaUpdateWithoutRespuestasEjecucionExamenInputSchema: z.ZodType<Prisma.RespuestaUpdateWithoutRespuestasEjecucionExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6898,7 +7000,7 @@ export const RespuestaUpdateWithoutRespuestasEjecucionExamenInputSchema: z.ZodTy
 }).strict();
 
 export const RespuestaUncheckedUpdateWithoutRespuestasEjecucionExamenInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateWithoutRespuestasEjecucionExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6919,7 +7021,7 @@ export const EjecucionExamenUpdateToOneWithWhereWithoutPregunta_ejecucion_actual
 }).strict();
 
 export const EjecucionExamenUpdateWithoutPregunta_ejecucion_actualInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateWithoutPregunta_ejecucion_actualInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6930,7 +7032,7 @@ export const EjecucionExamenUpdateWithoutPregunta_ejecucion_actualInputSchema: z
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateWithoutPregunta_ejecucion_actualInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateWithoutPregunta_ejecucion_actualInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7008,6 +7110,9 @@ export const CursoCreateOrConnectWithoutExamenesInputSchema: z.ZodType<Prisma.Cu
 export const RubricaHolisticaCreateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateWithoutExamenesInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -7018,6 +7123,9 @@ export const RubricaHolisticaCreateWithoutExamenesInputSchema: z.ZodType<Prisma.
 export const RubricaHolisticaUncheckedCreateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedCreateWithoutExamenesInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -7033,6 +7141,9 @@ export const RubricaHolisticaCreateOrConnectWithoutExamenesInputSchema: z.ZodTyp
 export const RubricaAnaliticaCreateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateWithoutExamenesInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -7043,6 +7154,9 @@ export const RubricaAnaliticaCreateWithoutExamenesInputSchema: z.ZodType<Prisma.
 export const RubricaAnaliticaUncheckedCreateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedCreateWithoutExamenesInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -7070,7 +7184,7 @@ export const StateCreateOrConnectWithoutExamenesInputSchema: z.ZodType<Prisma.St
 }).strict();
 
 export const PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7085,7 +7199,7 @@ export const PreguntaCreateWithoutExamen_con_pregunta_actual_syncInputSchema: z.
 }).strict();
 
 export const PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7105,7 +7219,7 @@ export const PreguntaCreateOrConnectWithoutExamen_con_pregunta_actual_syncInputS
 }).strict();
 
 export const PreguntaCreateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7120,7 +7234,7 @@ export const PreguntaCreateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaCr
 }).strict();
 
 export const PreguntaUncheckedCreateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7145,7 +7259,7 @@ export const PreguntaCreateManyExamenInputEnvelopeSchema: z.ZodType<Prisma.Pregu
 }).strict();
 
 export const HistorialCreateWithoutExamenInputSchema: z.ZodType<Prisma.HistorialCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -7154,7 +7268,7 @@ export const HistorialCreateWithoutExamenInputSchema: z.ZodType<Prisma.Historial
 }).strict();
 
 export const HistorialUncheckedCreateWithoutExamenInputSchema: z.ZodType<Prisma.HistorialUncheckedCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
@@ -7173,7 +7287,7 @@ export const HistorialCreateManyExamenInputEnvelopeSchema: z.ZodType<Prisma.Hist
 }).strict();
 
 export const EjecucionExamenCreateWithoutExamenInputSchema: z.ZodType<Prisma.EjecucionExamenCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   fin_examen: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -7184,7 +7298,7 @@ export const EjecucionExamenCreateWithoutExamenInputSchema: z.ZodType<Prisma.Eje
 }).strict();
 
 export const EjecucionExamenUncheckedCreateWithoutExamenInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedCreateWithoutExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
   fin_examen: z.coerce.date().optional().nullable(),
@@ -7295,6 +7409,9 @@ export const RubricaHolisticaUpdateToOneWithWhereWithoutExamenesInputSchema: z.Z
 export const RubricaHolisticaUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateWithoutExamenesInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7305,6 +7422,9 @@ export const RubricaHolisticaUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.
 export const RubricaHolisticaUncheckedUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateWithoutExamenesInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -7326,6 +7446,9 @@ export const RubricaAnaliticaUpdateToOneWithWhereWithoutExamenesInputSchema: z.Z
 export const RubricaAnaliticaUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaAnaliticaUpdateWithoutExamenesInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7336,6 +7459,9 @@ export const RubricaAnaliticaUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.
 export const RubricaAnaliticaUncheckedUpdateWithoutExamenesInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateWithoutExamenesInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -7375,7 +7501,7 @@ export const PreguntaUpdateToOneWithWhereWithoutExamen_con_pregunta_actual_syncI
 }).strict();
 
 export const PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7390,7 +7516,7 @@ export const PreguntaUpdateWithoutExamen_con_pregunta_actual_syncInputSchema: z.
 }).strict();
 
 export const PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutExamen_con_pregunta_actual_syncInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7519,7 +7645,7 @@ export const IndicadoresCreateOrConnectWithoutPreguntasInputSchema: z.ZodType<Pr
 }).strict();
 
 export const ExamenCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenCreateWithoutPreguntasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7543,7 +7669,7 @@ export const ExamenCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenCre
 }).strict();
 
 export const ExamenUncheckedCreateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutPreguntasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7572,7 +7698,7 @@ export const ExamenCreateOrConnectWithoutPreguntasInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const ExamenCreateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenCreateWithoutPregunta_actual_syncInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7596,7 +7722,7 @@ export const ExamenCreateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prism
 }).strict();
 
 export const ExamenUncheckedCreateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutPregunta_actual_syncInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7625,7 +7751,7 @@ export const ExamenCreateOrConnectWithoutPregunta_actual_syncInputSchema: z.ZodT
 }).strict();
 
 export const RespuestaCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaCreateWithoutPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -7635,7 +7761,7 @@ export const RespuestaCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.Respues
 }).strict();
 
 export const RespuestaUncheckedCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaUncheckedCreateWithoutPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -7655,7 +7781,7 @@ export const RespuestaCreateManyPreguntaInputEnvelopeSchema: z.ZodType<Prisma.Re
 }).strict();
 
 export const PreguntasEjecucionExamenCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateWithoutPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -7667,7 +7793,7 @@ export const PreguntasEjecucionExamenCreateWithoutPreguntaInputSchema: z.ZodType
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedCreateWithoutPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
@@ -7728,7 +7854,7 @@ export const ExamenUpdateToOneWithWhereWithoutPreguntasInputSchema: z.ZodType<Pr
 }).strict();
 
 export const ExamenUpdateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutPreguntasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7752,7 +7878,7 @@ export const ExamenUpdateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenUpd
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutPreguntasInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutPreguntasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7787,7 +7913,7 @@ export const ExamenUpdateToOneWithWhereWithoutPregunta_actual_syncInputSchema: z
 }).strict();
 
 export const ExamenUpdateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutPregunta_actual_syncInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7811,7 +7937,7 @@ export const ExamenUpdateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prism
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutPregunta_actual_syncInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutPregunta_actual_syncInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7880,7 +8006,7 @@ export const PreguntasEjecucionExamenUpdateManyWithWhereWithoutPreguntaInputSche
 }).strict();
 
 export const PreguntaCreateWithoutRespuestasInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutRespuestasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7895,7 +8021,7 @@ export const PreguntaCreateWithoutRespuestasInputSchema: z.ZodType<Prisma.Pregun
 }).strict();
 
 export const PreguntaUncheckedCreateWithoutRespuestasInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutRespuestasInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -7915,7 +8041,7 @@ export const PreguntaCreateOrConnectWithoutRespuestasInputSchema: z.ZodType<Pris
 }).strict();
 
 export const PreguntasEjecucionExamenCreateWithoutRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateWithoutRespuestaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
@@ -7927,7 +8053,7 @@ export const PreguntasEjecucionExamenCreateWithoutRespuestaInputSchema: z.ZodTyp
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedCreateWithoutRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedCreateWithoutRespuestaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   inicio: z.coerce.date().optional().nullable(),
@@ -7960,7 +8086,7 @@ export const PreguntaUpdateToOneWithWhereWithoutRespuestasInputSchema: z.ZodType
 }).strict();
 
 export const PreguntaUpdateWithoutRespuestasInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutRespuestasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -7975,7 +8101,7 @@ export const PreguntaUpdateWithoutRespuestasInputSchema: z.ZodType<Prisma.Pregun
 }).strict();
 
 export const PreguntaUncheckedUpdateWithoutRespuestasInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutRespuestasInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8048,7 +8174,7 @@ export const UserCreateOrConnectWithoutHistorialInputSchema: z.ZodType<Prisma.Us
 }).strict();
 
 export const ExamenCreateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenCreateWithoutHistorialInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8072,7 +8198,7 @@ export const ExamenCreateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenCre
 }).strict();
 
 export const ExamenUncheckedCreateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutHistorialInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8160,7 +8286,7 @@ export const ExamenUpdateToOneWithWhereWithoutHistorialInputSchema: z.ZodType<Pr
 }).strict();
 
 export const ExamenUpdateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutHistorialInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8184,7 +8310,7 @@ export const ExamenUpdateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenUpd
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutHistorialInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutHistorialInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8281,7 +8407,7 @@ export const NivelesDeLogroCreateManyRubrica_holisticaInputEnvelopeSchema: z.Zod
 }).strict();
 
 export const ExamenCreateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenCreateWithoutRubrica_holisticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8305,7 +8431,7 @@ export const ExamenCreateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.E
 }).strict();
 
 export const ExamenUncheckedCreateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutRubrica_holisticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8505,7 +8631,7 @@ export const IndicadoresCreateManyRubrica_analiticaInputEnvelopeSchema: z.ZodTyp
 }).strict();
 
 export const ExamenCreateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenCreateWithoutRubrica_analiticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8529,7 +8655,7 @@ export const ExamenCreateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.E
 }).strict();
 
 export const ExamenUncheckedCreateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutRubrica_analiticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8645,6 +8771,9 @@ export const ExamenUpdateManyWithWhereWithoutRubrica_analiticaInputSchema: z.Zod
 export const RubricaAnaliticaCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateWithoutIndicadoresInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8655,6 +8784,9 @@ export const RubricaAnaliticaCreateWithoutIndicadoresInputSchema: z.ZodType<Pris
 export const RubricaAnaliticaUncheckedCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedCreateWithoutIndicadoresInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -8668,7 +8800,7 @@ export const RubricaAnaliticaCreateOrConnectWithoutIndicadoresInputSchema: z.Zod
 }).strict();
 
 export const PreguntaCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.PreguntaCreateWithoutIndicadoresInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8683,7 +8815,7 @@ export const PreguntaCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.Pregu
 }).strict();
 
 export const PreguntaUncheckedCreateWithoutIndicadoresInputSchema: z.ZodType<Prisma.PreguntaUncheckedCreateWithoutIndicadoresInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8747,6 +8879,9 @@ export const RubricaAnaliticaUpdateToOneWithWhereWithoutIndicadoresInputSchema: 
 export const RubricaAnaliticaUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.RubricaAnaliticaUpdateWithoutIndicadoresInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8757,6 +8892,9 @@ export const RubricaAnaliticaUpdateWithoutIndicadoresInputSchema: z.ZodType<Pris
 export const RubricaAnaliticaUncheckedUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateWithoutIndicadoresInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -8799,6 +8937,9 @@ export const NivelesDeLogroUpdateManyWithWhereWithoutIndicadorInputSchema: z.Zod
 export const RubricaHolisticaCreateWithoutNiveles_de_logroInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateWithoutNiveles_de_logroInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8809,6 +8950,9 @@ export const RubricaHolisticaCreateWithoutNiveles_de_logroInputSchema: z.ZodType
 export const RubricaHolisticaUncheckedCreateWithoutNiveles_de_logroInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedCreateWithoutNiveles_de_logroInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   user_id: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -8859,6 +9003,9 @@ export const RubricaHolisticaUpdateToOneWithWhereWithoutNiveles_de_logroInputSch
 export const RubricaHolisticaUpdateWithoutNiveles_de_logroInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateWithoutNiveles_de_logroInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8869,6 +9016,9 @@ export const RubricaHolisticaUpdateWithoutNiveles_de_logroInputSchema: z.ZodType
 export const RubricaHolisticaUncheckedUpdateWithoutNiveles_de_logroInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateWithoutNiveles_de_logroInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -8907,7 +9057,7 @@ export const IndicadoresUncheckedUpdateWithoutNiveles_de_logroInputSchema: z.Zod
 }).strict();
 
 export const ExamenCreateWithoutStateInputSchema: z.ZodType<Prisma.ExamenCreateWithoutStateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8931,7 +9081,7 @@ export const ExamenCreateWithoutStateInputSchema: z.ZodType<Prisma.ExamenCreateW
 }).strict();
 
 export const ExamenUncheckedCreateWithoutStateInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutStateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -8983,6 +9133,9 @@ export const ExamenUpdateManyWithWhereWithoutStateInputSchema: z.ZodType<Prisma.
 export const RubricaHolisticaCreateWithoutUserInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8993,6 +9146,9 @@ export const RubricaHolisticaCreateWithoutUserInputSchema: z.ZodType<Prisma.Rubr
 export const RubricaHolisticaUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -9013,6 +9169,9 @@ export const RubricaHolisticaCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma
 export const RubricaAnaliticaCreateWithoutUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -9023,6 +9182,9 @@ export const RubricaAnaliticaCreateWithoutUserInputSchema: z.ZodType<Prisma.Rubr
 export const RubricaAnaliticaUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -9041,7 +9203,7 @@ export const RubricaAnaliticaCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma
 }).strict();
 
 export const HistorialCreateWithoutUserInputSchema: z.ZodType<Prisma.HistorialCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -9050,7 +9212,7 @@ export const HistorialCreateWithoutUserInputSchema: z.ZodType<Prisma.HistorialCr
 }).strict();
 
 export const HistorialUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.HistorialUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   examen_id: z.string(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
@@ -9069,7 +9231,7 @@ export const HistorialCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.Histor
 }).strict();
 
 export const ExamenCreateWithoutUserInputSchema: z.ZodType<Prisma.ExamenCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9093,7 +9255,7 @@ export const ExamenCreateWithoutUserInputSchema: z.ZodType<Prisma.ExamenCreateWi
 }).strict();
 
 export const ExamenUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.ExamenUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9127,7 +9289,7 @@ export const ExamenCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.ExamenCre
 }).strict();
 
 export const EjecucionExamenCreateWithoutUserInputSchema: z.ZodType<Prisma.EjecucionExamenCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   fin_examen: z.coerce.date().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
@@ -9138,7 +9300,7 @@ export const EjecucionExamenCreateWithoutUserInputSchema: z.ZodType<Prisma.Ejecu
 }).strict();
 
 export const EjecucionExamenUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
   fin_examen: z.coerce.date().optional().nullable(),
@@ -9207,6 +9369,9 @@ export const RubricaHolisticaScalarWhereInputSchema: z.ZodType<Prisma.RubricaHol
   NOT: z.union([ z.lazy(() => RubricaHolisticaScalarWhereInputSchema),z.lazy(() => RubricaHolisticaScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -9235,6 +9400,9 @@ export const RubricaAnaliticaScalarWhereInputSchema: z.ZodType<Prisma.RubricaAna
   NOT: z.union([ z.lazy(() => RubricaAnaliticaScalarWhereInputSchema),z.lazy(() => RubricaAnaliticaScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  competencias: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  capacidades: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  desempenos: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   user_id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -9306,7 +9474,7 @@ export const UsuarioCursoUpdateManyWithWhereWithoutUserInputSchema: z.ZodType<Pr
 }).strict();
 
 export const ExamenCreateManyCursoInputSchema: z.ZodType<Prisma.ExamenCreateManyCursoInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9336,7 +9504,7 @@ export const UsuarioCursoCreateManyCursoInputSchema: z.ZodType<Prisma.UsuarioCur
 }).strict();
 
 export const ExamenUpdateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutCursoInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9360,7 +9528,7 @@ export const ExamenUpdateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUpdateW
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutCursoInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9384,7 +9552,7 @@ export const ExamenUncheckedUpdateWithoutCursoInputSchema: z.ZodType<Prisma.Exam
 }).strict();
 
 export const ExamenUncheckedUpdateManyWithoutCursoInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutCursoInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9431,7 +9599,7 @@ export const UsuarioCursoUncheckedUpdateManyWithoutCursoInputSchema: z.ZodType<P
 }).strict();
 
 export const PreguntasEjecucionExamenCreateManyEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateManyEjecucion_examenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   pregunta_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
@@ -9442,7 +9610,7 @@ export const PreguntasEjecucionExamenCreateManyEjecucion_examenInputSchema: z.Zo
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateWithoutEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateWithoutEjecucion_examenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9454,7 +9622,7 @@ export const PreguntasEjecucionExamenUpdateWithoutEjecucion_examenInputSchema: z
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_examenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9466,7 +9634,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_examenInput
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutEjecucion_examenInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateManyWithoutEjecucion_examenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9477,7 +9645,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutEjecucion_examenI
 }).strict();
 
 export const PreguntaCreateManyExamenInputSchema: z.ZodType<Prisma.PreguntaCreateManyExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9488,7 +9656,7 @@ export const PreguntaCreateManyExamenInputSchema: z.ZodType<Prisma.PreguntaCreat
 }).strict();
 
 export const HistorialCreateManyExamenInputSchema: z.ZodType<Prisma.HistorialCreateManyExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
@@ -9497,7 +9665,7 @@ export const HistorialCreateManyExamenInputSchema: z.ZodType<Prisma.HistorialCre
 }).strict();
 
 export const EjecucionExamenCreateManyExamenInputSchema: z.ZodType<Prisma.EjecucionExamenCreateManyExamenInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   user_id: z.number().int(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
   fin_examen: z.coerce.date().optional().nullable(),
@@ -9507,7 +9675,7 @@ export const EjecucionExamenCreateManyExamenInputSchema: z.ZodType<Prisma.Ejecuc
 }).strict();
 
 export const PreguntaUpdateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9522,7 +9690,7 @@ export const PreguntaUpdateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUp
 }).strict();
 
 export const PreguntaUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9537,7 +9705,7 @@ export const PreguntaUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.P
 }).strict();
 
 export const PreguntaUncheckedUpdateManyWithoutExamenInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateManyWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9548,7 +9716,7 @@ export const PreguntaUncheckedUpdateManyWithoutExamenInputSchema: z.ZodType<Pris
 }).strict();
 
 export const HistorialUpdateWithoutExamenInputSchema: z.ZodType<Prisma.HistorialUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9557,7 +9725,7 @@ export const HistorialUpdateWithoutExamenInputSchema: z.ZodType<Prisma.Historial
 }).strict();
 
 export const HistorialUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9566,7 +9734,7 @@ export const HistorialUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const HistorialUncheckedUpdateManyWithoutExamenInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateManyWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9575,7 +9743,7 @@ export const HistorialUncheckedUpdateManyWithoutExamenInputSchema: z.ZodType<Pri
 }).strict();
 
 export const EjecucionExamenUpdateWithoutExamenInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9586,7 +9754,7 @@ export const EjecucionExamenUpdateWithoutExamenInputSchema: z.ZodType<Prisma.Eje
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateWithoutExamenInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9597,7 +9765,7 @@ export const EjecucionExamenUncheckedUpdateWithoutExamenInputSchema: z.ZodType<P
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateManyWithoutExamenInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateManyWithoutExamenInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   user_id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9607,7 +9775,7 @@ export const EjecucionExamenUncheckedUpdateManyWithoutExamenInputSchema: z.ZodTy
 }).strict();
 
 export const RespuestaCreateManyPreguntaInputSchema: z.ZodType<Prisma.RespuestaCreateManyPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   respuesta: z.string(),
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
@@ -9616,7 +9784,7 @@ export const RespuestaCreateManyPreguntaInputSchema: z.ZodType<Prisma.RespuestaC
 }).strict();
 
 export const PreguntasEjecucionExamenCreateManyPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateManyPreguntaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
@@ -9655,7 +9823,7 @@ export const IndicadoresUncheckedUpdateManyWithoutPreguntasInputSchema: z.ZodTyp
 }).strict();
 
 export const RespuestaUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaUpdateWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9665,7 +9833,7 @@ export const RespuestaUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.Respues
 }).strict();
 
 export const RespuestaUncheckedUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9675,7 +9843,7 @@ export const RespuestaUncheckedUpdateWithoutPreguntaInputSchema: z.ZodType<Prism
 }).strict();
 
 export const RespuestaUncheckedUpdateManyWithoutPreguntaInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateManyWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9684,7 +9852,7 @@ export const RespuestaUncheckedUpdateManyWithoutPreguntaInputSchema: z.ZodType<P
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9696,7 +9864,7 @@ export const PreguntasEjecucionExamenUpdateWithoutPreguntaInputSchema: z.ZodType
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9708,7 +9876,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutPreguntaInputSchema: 
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9719,7 +9887,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaInputSche
 }).strict();
 
 export const PreguntasEjecucionExamenCreateManyRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateManyRespuestaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   ejecucion_examen_id: z.string(),
   pregunta_id: z.string(),
   inicio: z.coerce.date().optional().nullable(),
@@ -9730,7 +9898,7 @@ export const PreguntasEjecucionExamenCreateManyRespuestaInputSchema: z.ZodType<P
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateWithoutRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateWithoutRespuestaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -9742,7 +9910,7 @@ export const PreguntasEjecucionExamenUpdateWithoutRespuestaInputSchema: z.ZodTyp
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateWithoutRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateWithoutRespuestaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9754,7 +9922,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutRespuestaInputSchema:
 }).strict();
 
 export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutRespuestaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUncheckedUpdateManyWithoutRespuestaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ejecucion_examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9776,7 +9944,7 @@ export const NivelesDeLogroCreateManyRubrica_holisticaInputSchema: z.ZodType<Pri
 }).strict();
 
 export const ExamenCreateManyRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenCreateManyRubrica_holisticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9829,7 +9997,7 @@ export const NivelesDeLogroUncheckedUpdateManyWithoutRubrica_holisticaInputSchem
 }).strict();
 
 export const ExamenUpdateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutRubrica_holisticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9853,7 +10021,7 @@ export const ExamenUpdateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.E
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutRubrica_holisticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9877,7 +10045,7 @@ export const ExamenUncheckedUpdateWithoutRubrica_holisticaInputSchema: z.ZodType
 }).strict();
 
 export const ExamenUncheckedUpdateManyWithoutRubrica_holisticaInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutRubrica_holisticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9906,7 +10074,7 @@ export const IndicadoresCreateManyRubrica_analiticaInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const ExamenCreateManyRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenCreateManyRubrica_analiticaInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -9954,7 +10122,7 @@ export const IndicadoresUncheckedUpdateManyWithoutRubrica_analiticaInputSchema: 
 }).strict();
 
 export const ExamenUpdateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutRubrica_analiticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9978,7 +10146,7 @@ export const ExamenUpdateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.E
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutRubrica_analiticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10002,7 +10170,7 @@ export const ExamenUncheckedUpdateWithoutRubrica_analiticaInputSchema: z.ZodType
 }).strict();
 
 export const ExamenUncheckedUpdateManyWithoutRubrica_analiticaInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutRubrica_analiticaInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10034,7 +10202,7 @@ export const NivelesDeLogroCreateManyIndicadorInputSchema: z.ZodType<Prisma.Nive
 }).strict();
 
 export const PreguntaUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.PreguntaUpdateWithoutIndicadoresInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10049,7 +10217,7 @@ export const PreguntaUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.Pregu
 }).strict();
 
 export const PreguntaUncheckedUpdateWithoutIndicadoresInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateWithoutIndicadoresInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10064,7 +10232,7 @@ export const PreguntaUncheckedUpdateWithoutIndicadoresInputSchema: z.ZodType<Pri
 }).strict();
 
 export const PreguntaUncheckedUpdateManyWithoutIndicadoresInputSchema: z.ZodType<Prisma.PreguntaUncheckedUpdateManyWithoutIndicadoresInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10108,7 +10276,7 @@ export const NivelesDeLogroUncheckedUpdateManyWithoutIndicadorInputSchema: z.Zod
 }).strict();
 
 export const ExamenCreateManyStateInputSchema: z.ZodType<Prisma.ExamenCreateManyStateInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -10129,7 +10297,7 @@ export const ExamenCreateManyStateInputSchema: z.ZodType<Prisma.ExamenCreateMany
 }).strict();
 
 export const ExamenUpdateWithoutStateInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutStateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10153,7 +10321,7 @@ export const ExamenUpdateWithoutStateInputSchema: z.ZodType<Prisma.ExamenUpdateW
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutStateInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutStateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10177,7 +10345,7 @@ export const ExamenUncheckedUpdateWithoutStateInputSchema: z.ZodType<Prisma.Exam
 }).strict();
 
 export const ExamenUncheckedUpdateManyWithoutStateInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutStateInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10200,6 +10368,9 @@ export const ExamenUncheckedUpdateManyWithoutStateInputSchema: z.ZodType<Prisma.
 export const RubricaHolisticaCreateManyUserInputSchema: z.ZodType<Prisma.RubricaHolisticaCreateManyUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -10208,13 +10379,16 @@ export const RubricaHolisticaCreateManyUserInputSchema: z.ZodType<Prisma.Rubrica
 export const RubricaAnaliticaCreateManyUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaCreateManyUserInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
+  competencias: z.string(),
+  capacidades: z.string(),
+  desempenos: z.string(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
 }).strict();
 
 export const HistorialCreateManyUserInputSchema: z.ZodType<Prisma.HistorialCreateManyUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   examen_id: z.string(),
   puntaje: z.number().int(),
   created_at: z.coerce.date().optional(),
@@ -10223,7 +10397,7 @@ export const HistorialCreateManyUserInputSchema: z.ZodType<Prisma.HistorialCreat
 }).strict();
 
 export const ExamenCreateManyUserInputSchema: z.ZodType<Prisma.ExamenCreateManyUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   title: z.string(),
   description: z.string().optional().nullable(),
   img: z.string().optional().nullable(),
@@ -10244,7 +10418,7 @@ export const ExamenCreateManyUserInputSchema: z.ZodType<Prisma.ExamenCreateManyU
 }).strict();
 
 export const EjecucionExamenCreateManyUserInputSchema: z.ZodType<Prisma.EjecucionExamenCreateManyUserInput> = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().cuid().optional(),
   examen_id: z.string(),
   pregunta_ejecucion_actual_id: z.string().optional().nullable(),
   fin_examen: z.coerce.date().optional().nullable(),
@@ -10265,6 +10439,9 @@ export const UsuarioCursoCreateManyUserInputSchema: z.ZodType<Prisma.UsuarioCurs
 export const RubricaHolisticaUpdateWithoutUserInputSchema: z.ZodType<Prisma.RubricaHolisticaUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10275,6 +10452,9 @@ export const RubricaHolisticaUpdateWithoutUserInputSchema: z.ZodType<Prisma.Rubr
 export const RubricaHolisticaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10285,6 +10465,9 @@ export const RubricaHolisticaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Pr
 export const RubricaHolisticaUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.RubricaHolisticaUncheckedUpdateManyWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10293,6 +10476,9 @@ export const RubricaHolisticaUncheckedUpdateManyWithoutUserInputSchema: z.ZodTyp
 export const RubricaAnaliticaUpdateWithoutUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10303,6 +10489,9 @@ export const RubricaAnaliticaUpdateWithoutUserInputSchema: z.ZodType<Prisma.Rubr
 export const RubricaAnaliticaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10313,13 +10502,16 @@ export const RubricaAnaliticaUncheckedUpdateWithoutUserInputSchema: z.ZodType<Pr
 export const RubricaAnaliticaUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.RubricaAnaliticaUncheckedUpdateManyWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  competencias: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  capacidades: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  desempenos: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const HistorialUpdateWithoutUserInputSchema: z.ZodType<Prisma.HistorialUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -10328,7 +10520,7 @@ export const HistorialUpdateWithoutUserInputSchema: z.ZodType<Prisma.HistorialUp
 }).strict();
 
 export const HistorialUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -10337,7 +10529,7 @@ export const HistorialUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Hi
 }).strict();
 
 export const HistorialUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.HistorialUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   puntaje: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -10346,7 +10538,7 @@ export const HistorialUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prism
 }).strict();
 
 export const ExamenUpdateWithoutUserInputSchema: z.ZodType<Prisma.ExamenUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10370,7 +10562,7 @@ export const ExamenUpdateWithoutUserInputSchema: z.ZodType<Prisma.ExamenUpdateWi
 }).strict();
 
 export const ExamenUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10394,7 +10586,7 @@ export const ExamenUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Exame
 }).strict();
 
 export const ExamenUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.ExamenUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   img: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10415,7 +10607,7 @@ export const ExamenUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.E
 }).strict();
 
 export const EjecucionExamenUpdateWithoutUserInputSchema: z.ZodType<Prisma.EjecucionExamenUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -10426,7 +10618,7 @@ export const EjecucionExamenUpdateWithoutUserInputSchema: z.ZodType<Prisma.Ejecu
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -10437,7 +10629,7 @@ export const EjecucionExamenUncheckedUpdateWithoutUserInputSchema: z.ZodType<Pri
 }).strict();
 
 export const EjecucionExamenUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.EjecucionExamenUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   examen_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   pregunta_ejecucion_actual_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   fin_examen: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),

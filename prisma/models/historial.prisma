@@ -1,5 +1,5 @@
 model Historial {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     user_id Int
     user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

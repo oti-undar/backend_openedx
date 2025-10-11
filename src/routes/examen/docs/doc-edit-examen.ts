@@ -45,7 +45,7 @@ const {
   ...respuestaExample
 } = respuestaSchemaExample
 
-const createExamenSchema = addOptionalToNullable(ExamenSchema)
+const EditExamenSchema = addOptionalToNullable(ExamenSchema)
   .omit({
     id: true,
     created_at: true,
@@ -85,57 +85,56 @@ const createExamenSchema = addOptionalToNullable(ExamenSchema)
     }),
   })
 
-export type CreateExamenSchemaProps = z.infer<typeof createExamenSchema>
+export type EditExamenSchemaProps = z.infer<typeof EditExamenSchema>
 
-const createExamenCompleteSchema = createExamenSchema
-  .extend({
-    preguntas: z
-      .array(
-        addOptionalToNullable(PreguntaSchema)
-          .omit({
-            id: true,
-            examen_id: true,
-            img: true,
-            video: true,
-            audio: true,
-            puntos: true,
-            duracion: true,
-          })
-          .extend({
-            archivo: fileSchema,
-            puntos: z
-              .string()
-              .default('1')
-              .transform(val => Number(val))
-              .refine(val => !isNaN(val), { message: 'puntos inválidos' }),
-            duracion: z.preprocess(
-              val =>
-                val === null || val === undefined || val === ''
-                  ? undefined
-                  : Number(val),
-              z.number().optional()
-            ),
-            indicadores: z.array(z.coerce.number().int()).optional(),
-            respuestas: z
-              .array(
-                addOptionalToNullable(RespuestaSchema)
-                  .omit({
-                    id: true,
-                    pregunta_id: true,
-                    img: true,
-                    video: true,
-                    audio: true,
-                    correcta: true,
-                  })
-                  .extend({
-                    archivo: fileSchema,
-                  })
-              )
-              .min(4),
-          })
-      )
-      .min(1),
-  })
+const EditExamenCompleteSchema = EditExamenSchema.extend({
+  preguntas: z
+    .array(
+      addOptionalToNullable(PreguntaSchema)
+        .omit({
+          id: true,
+          examen_id: true,
+          img: true,
+          video: true,
+          audio: true,
+          puntos: true,
+          duracion: true,
+        })
+        .extend({
+          archivo: fileSchema,
+          puntos: z
+            .string()
+            .default('1')
+            .transform(val => Number(val))
+            .refine(val => !isNaN(val), { message: 'puntos inválidos' }),
+          duracion: z.preprocess(
+            val =>
+              val === null || val === undefined || val === ''
+                ? undefined
+                : Number(val),
+            z.number().optional()
+          ),
+          indicadores: z.array(z.coerce.number().int()).optional(),
+          respuestas: z
+            .array(
+              addOptionalToNullable(RespuestaSchema)
+                .omit({
+                  id: true,
+                  pregunta_id: true,
+                  img: true,
+                  video: true,
+                  audio: true,
+                  correcta: true,
+                })
+                .extend({
+                  archivo: fileSchema,
+                })
+            )
+            .min(4),
+        })
+    )
+    .min(1),
+})
   .openapi({
     example: {
       ...examenExample,
@@ -151,24 +150,25 @@ const createExamenCompleteSchema = createExamenSchema
       ],
     },
   })
-  .openapi('Create_Examen_Schema')
+  .openapi('Edit_Examen_Schema')
 
-export type CreateExamenCompleteSchemaProps = z.infer<
-  typeof createExamenCompleteSchema
+export type EditExamenCompleteSchemaProps = z.infer<
+  typeof EditExamenCompleteSchema
 >
 
-export const createExamenRoute = createRoute({
-  method: 'post',
-  path: '/',
+export const EditExamenRoute = createRoute({
+  method: 'put',
+  path: '/:id',
   tags: ['Examen'],
-  summary: 'Crear un examen',
+  summary: 'Editar un examen',
   description:
-    'Crea un nuevo examen. Recibe como parámetros el título (string), la descripción (string), la imagen (string), el video (string), la fecha de vencimiento (string) y el ID del usuario (string). Si el examen se crea correctamente, se devuelve el examen creado.',
+    'Edita un examen. Recibe como parámetros el título (string), la descripción (string), la imagen (string), el video (string), la fecha de vencimiento (string) y el ID del usuario (string). Si el examen se edita correctamente, se devuelve el examen editado.',
   request: {
+    params: ExamenSchema.pick({ id: true }),
     body: {
       content: {
         'multipart/form-data': {
-          schema: createExamenSchema,
+          schema: EditExamenSchema,
         },
       },
       required: true,
@@ -178,7 +178,7 @@ export const createExamenRoute = createRoute({
     const formData = await c.req.formData()
     const parsedQuery = parseFormDataToObject(formData)
 
-    const result = createExamenCompleteSchema.safeParse(parsedQuery)
+    const result = EditExamenCompleteSchema.safeParse(parsedQuery)
 
     if (!result.success) return c.json(result, 400)
 

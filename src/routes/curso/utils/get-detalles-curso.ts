@@ -16,9 +16,6 @@ export async function getDetallesCurso({
     select: {
       id: true,
       usuarios: {
-        // where: {
-        //   is_instructor: false,
-        // },
         select: {
           id: true,
           user_id: true,
@@ -35,6 +32,7 @@ export async function getDetallesCurso({
                   examen: {
                     select: {
                       id: true,
+                      peso: true,
                       preguntas: {
                         select: {
                           id: true,
@@ -65,6 +63,11 @@ export async function getDetallesCurso({
               },
             },
           },
+        },
+      },
+      examenes: {
+        select: {
+          peso: true,
         },
       },
     },

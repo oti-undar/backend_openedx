@@ -2,22 +2,25 @@ import type { dbTransaction } from '@/db/db.js'
 import type { CreateExamenCompleteSchemaProps } from '../docs/doc-create-examen.js'
 import { guardarArchivo } from '@/helpers/guardar-archivo.js'
 import cuid from 'cuid'
-import { createJob } from '@/helpers/jobs.js'
+import type { Examen } from '@prisma/client'
+import { createJob, editJob } from '@/helpers/jobs.js'
 import {
   empezarJobExamen,
   finalizarJobExamen,
 } from '../helpers/finalizar-job-examen.js'
 
-export async function createExamen({
+export async function editExamen({
   item,
   prisma,
+  id,
 }: {
   item: CreateExamenCompleteSchemaProps
   prisma: dbTransaction
+  id: Examen['id']
 }) {
   const { preguntas, archivo: archivo_examen, ...examenData } = item
 
-  const cuid_examen = cuid()
+  const cuid_examen = id
   let file_examen: string | null = null
   let tipo_examen: 'img' | 'audio' | 'video' | null = null
   if (archivo_examen) {
@@ -29,7 +32,16 @@ export async function createExamen({
     tipo_examen = tipo_archivo
   }
 
-  const examen = await prisma.examen.create({
+  await prisma.pregunta.deleteMany({
+    where: {
+      examen_id: id,
+    },
+  })
+
+  const examen = await prisma.examen.update({
+    where: {
+      id,
+    },
     data: {
       ...examenData,
       ...(tipo_examen &&
@@ -109,11 +121,11 @@ export async function createExamen({
   })
 
   if (examen.final_examen)
-    createJob(examen.id, examen.final_examen, async () => {
+    editJob(examen.id, examen.final_examen, async () => {
       finalizarJobExamen(examen.id)
     })
   if (examen.inicio_examen)
-    createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
+    editJob(examen.id + 'inicio', examen.inicio_examen, async () => {
       empezarJobExamen(examen.id)
     })
 
