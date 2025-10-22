@@ -7,6 +7,8 @@ import {
   empezarJobExamen,
   finalizarJobExamen,
 } from '../helpers/finalizar-job-examen.js'
+import { TipoExamen } from '@prisma/client'
+import { createEjecucionExamen } from '@/routes/ejecucion-examen/utils/create-ejecucion-examen.js'
 
 export async function createExamen({
   item,
@@ -107,6 +109,52 @@ export async function createExamen({
       },
     },
   })
+
+  if (examen.tipo_examen === TipoExamen.Solo) {
+    const examen_aux = await prisma.examen.findUnique({
+      where: {
+        id: examen.id,
+      },
+      select: {
+        id: true,
+        curso: {
+          select: {
+            usuarios: {
+              where: {
+                user: {
+                  id: { not: examen.user_id },
+                },
+              },
+              select: {
+                user_id: true,
+              },
+            },
+          },
+        },
+        preguntas: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+    if (!examen_aux) throw new Error('Examen no encontrado')
+
+    const alumnos =
+      examen_aux?.curso.usuarios.map(usuario => usuario.user_id) || []
+    await Promise.all(
+      alumnos.map(alumnoId => {
+        return createEjecucionExamen({
+          item: {
+            user_id: alumnoId,
+            examen_id: examen_aux.id,
+            pregunta_id: examen_aux.preguntas[0].id,
+          },
+          prisma,
+        })
+      })
+    )
+  }
 
   if (examen.final_examen)
     createJob(examen.id, examen.final_examen, async () => {
