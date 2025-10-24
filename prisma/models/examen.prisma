@@ -1,7 +1,6 @@
 enum TipoExamen {
     Sync
     Async
-    Solo
 }
 
 model Examen {

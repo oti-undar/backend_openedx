@@ -131,7 +131,7 @@ const createExamenCompleteSchema = createExamenSchema
                     archivo: fileSchema,
                   })
               )
-              .min(2),
+              .min(4),
           })
       )
       .min(1),
