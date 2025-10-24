@@ -91,7 +91,7 @@ export const NivelesDeLogroOrderByRelevanceFieldEnumSchema = z.enum(['name','cri
 
 export const UserOrderByRelevanceFieldEnumSchema = z.enum(['username','first_name','last_name','email']);
 
-export const TipoExamenSchema = z.enum(['Sync','Async']);
+export const TipoExamenSchema = z.enum(['Sync','Async','Solo']);
 
 export type TipoExamenType = `${z.infer<typeof TipoExamenSchema>}`
 
