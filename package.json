@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && tsc-alias",
+    "build": "npx prisma generate && tsc && tsc-alias",
     "start": "node dist/index.js",
     "migrate:fresh": "(if exist prisma\\migrations (rmdir /s /q prisma\\migrations)) && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
     "migrate:fresh:linux": "rm -rf prisma/migrations && npx prisma migrate reset --force && npx prisma migrate dev --name init && npm run seed",
