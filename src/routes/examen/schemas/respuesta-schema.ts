@@ -1,6 +1,7 @@
 export const respuestaSchemaExample = {
   id: 4,
   respuesta: 'París',
+  retroalimentacion: 'París',
   img: 'https://example.com/respuesta.jpg',
   video: 'https://example.com/respuesta.mp4',
   audio: 'https://example.com/respuesta.mp3',
