@@ -45,7 +45,7 @@ export const ExamenScalarFieldEnumSchema = z.enum(['id','title','description','i
 
 export const PreguntaScalarFieldEnumSchema = z.enum(['id','title','description','img','video','audio','puntos','duracion','examen_id']);
 
-export const RespuestaScalarFieldEnumSchema = z.enum(['id','respuesta','img','video','audio','correcta','pregunta_id']);
+export const RespuestaScalarFieldEnumSchema = z.enum(['id','respuesta','img','video','audio','correcta','retroalimentacion','pregunta_id']);
 
 export const HistorialScalarFieldEnumSchema = z.enum(['id','user_id','examen_id','puntaje','created_at','updated_at','deleted_at']);
 
@@ -77,7 +77,7 @@ export const ExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','title','descr
 
 export const PreguntaOrderByRelevanceFieldEnumSchema = z.enum(['id','title','description','img','video','audio','examen_id']);
 
-export const RespuestaOrderByRelevanceFieldEnumSchema = z.enum(['id','respuesta','img','video','audio','pregunta_id']);
+export const RespuestaOrderByRelevanceFieldEnumSchema = z.enum(['id','respuesta','img','video','audio','retroalimentacion','pregunta_id']);
 
 export const HistorialOrderByRelevanceFieldEnumSchema = z.enum(['id','examen_id']);
 
@@ -225,6 +225,7 @@ export const RespuestaSchema = z.object({
   video: z.string().nullable(),
   audio: z.string().nullable(),
   correcta: z.boolean(),
+  retroalimentacion: z.string().nullable(),
   pregunta_id: z.string(),
 })
 
@@ -617,6 +618,7 @@ export const RespuestaSelectSchema: z.ZodType<Prisma.RespuestaSelect> = z.object
   video: z.boolean().optional(),
   audio: z.boolean().optional(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.boolean().optional(),
   pregunta_id: z.boolean().optional(),
   pregunta: z.union([z.boolean(),z.lazy(() => PreguntaArgsSchema)]).optional(),
   respuestasEjecucionExamen: z.union([z.boolean(),z.lazy(() => PreguntasEjecucionExamenFindManyArgsSchema)]).optional(),
@@ -1499,6 +1501,7 @@ export const RespuestaWhereInputSchema: z.ZodType<Prisma.RespuestaWhereInput> = 
   video: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   audio: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   correcta: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   pregunta_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   pregunta: z.union([ z.lazy(() => PreguntaScalarRelationFilterSchema),z.lazy(() => PreguntaWhereInputSchema) ]).optional(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenListRelationFilterSchema).optional()
@@ -1511,6 +1514,7 @@ export const RespuestaOrderByWithRelationInputSchema: z.ZodType<Prisma.Respuesta
   video: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   audio: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   correcta: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   pregunta_id: z.lazy(() => SortOrderSchema).optional(),
   pregunta: z.lazy(() => PreguntaOrderByWithRelationInputSchema).optional(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenOrderByRelationAggregateInputSchema).optional(),
@@ -1530,6 +1534,7 @@ export const RespuestaWhereUniqueInputSchema: z.ZodType<Prisma.RespuestaWhereUni
   video: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   audio: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   correcta: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   pregunta_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   pregunta: z.union([ z.lazy(() => PreguntaScalarRelationFilterSchema),z.lazy(() => PreguntaWhereInputSchema) ]).optional(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenListRelationFilterSchema).optional()
@@ -1542,6 +1547,7 @@ export const RespuestaOrderByWithAggregationInputSchema: z.ZodType<Prisma.Respue
   video: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   audio: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   correcta: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   pregunta_id: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => RespuestaCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => RespuestaMaxOrderByAggregateInputSchema).optional(),
@@ -1558,6 +1564,7 @@ export const RespuestaScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Res
   video: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   audio: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   correcta: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   pregunta_id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -2740,6 +2747,7 @@ export const RespuestaCreateInputSchema: z.ZodType<Prisma.RespuestaCreateInput> 
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   pregunta: z.lazy(() => PreguntaCreateNestedOneWithoutRespuestasInputSchema),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutRespuestaInputSchema).optional()
 }).strict();
@@ -2751,6 +2759,7 @@ export const RespuestaUncheckedCreateInputSchema: z.ZodType<Prisma.RespuestaUnch
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   pregunta_id: z.string(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutRespuestaInputSchema).optional()
 }).strict();
@@ -2762,6 +2771,7 @@ export const RespuestaUpdateInputSchema: z.ZodType<Prisma.RespuestaUpdateInput> 
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   pregunta: z.lazy(() => PreguntaUpdateOneRequiredWithoutRespuestasNestedInputSchema).optional(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutRespuestaNestedInputSchema).optional()
 }).strict();
@@ -2773,6 +2783,7 @@ export const RespuestaUncheckedUpdateInputSchema: z.ZodType<Prisma.RespuestaUnch
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutRespuestaNestedInputSchema).optional()
 }).strict();
@@ -2784,6 +2795,7 @@ export const RespuestaCreateManyInputSchema: z.ZodType<Prisma.RespuestaCreateMan
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   pregunta_id: z.string()
 }).strict();
 
@@ -2794,6 +2806,7 @@ export const RespuestaUpdateManyMutationInputSchema: z.ZodType<Prisma.RespuestaU
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const RespuestaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RespuestaUncheckedUpdateManyInput> = z.object({
@@ -2803,6 +2816,7 @@ export const RespuestaUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Respuesta
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -4036,6 +4050,7 @@ export const RespuestaCountOrderByAggregateInputSchema: z.ZodType<Prisma.Respues
   video: z.lazy(() => SortOrderSchema).optional(),
   audio: z.lazy(() => SortOrderSchema).optional(),
   correcta: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   pregunta_id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -4046,6 +4061,7 @@ export const RespuestaMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Respuesta
   video: z.lazy(() => SortOrderSchema).optional(),
   audio: z.lazy(() => SortOrderSchema).optional(),
   correcta: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   pregunta_id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -4056,6 +4072,7 @@ export const RespuestaMinOrderByAggregateInputSchema: z.ZodType<Prisma.Respuesta
   video: z.lazy(() => SortOrderSchema).optional(),
   audio: z.lazy(() => SortOrderSchema).optional(),
   correcta: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   pregunta_id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -6859,6 +6876,7 @@ export const RespuestaCreateWithoutRespuestasEjecucionExamenInputSchema: z.ZodTy
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   pregunta: z.lazy(() => PreguntaCreateNestedOneWithoutRespuestasInputSchema)
 }).strict();
 
@@ -6869,6 +6887,7 @@ export const RespuestaUncheckedCreateWithoutRespuestasEjecucionExamenInputSchema
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   pregunta_id: z.string()
 }).strict();
 
@@ -6996,6 +7015,7 @@ export const RespuestaUpdateWithoutRespuestasEjecucionExamenInputSchema: z.ZodTy
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   pregunta: z.lazy(() => PreguntaUpdateOneRequiredWithoutRespuestasNestedInputSchema).optional()
 }).strict();
 
@@ -7006,6 +7026,7 @@ export const RespuestaUncheckedUpdateWithoutRespuestasEjecucionExamenInputSchema
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -7757,6 +7778,7 @@ export const RespuestaCreateWithoutPreguntaInputSchema: z.ZodType<Prisma.Respues
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenCreateNestedManyWithoutRespuestaInputSchema).optional()
 }).strict();
 
@@ -7767,6 +7789,7 @@ export const RespuestaUncheckedCreateWithoutPreguntaInputSchema: z.ZodType<Prism
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
   correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedCreateNestedManyWithoutRespuestaInputSchema).optional()
 }).strict();
 
@@ -7986,6 +8009,7 @@ export const RespuestaScalarWhereInputSchema: z.ZodType<Prisma.RespuestaScalarWh
   video: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   audio: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   correcta: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   pregunta_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -9780,7 +9804,8 @@ export const RespuestaCreateManyPreguntaInputSchema: z.ZodType<Prisma.RespuestaC
   img: z.string().optional().nullable(),
   video: z.string().optional().nullable(),
   audio: z.string().optional().nullable(),
-  correcta: z.boolean().optional()
+  correcta: z.boolean().optional(),
+  retroalimentacion: z.string().optional().nullable()
 }).strict();
 
 export const PreguntasEjecucionExamenCreateManyPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenCreateManyPreguntaInput> = z.object({
@@ -9829,6 +9854,7 @@ export const RespuestaUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.Respues
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUpdateManyWithoutRespuestaNestedInputSchema).optional()
 }).strict();
 
@@ -9839,6 +9865,7 @@ export const RespuestaUncheckedUpdateWithoutPreguntaInputSchema: z.ZodType<Prism
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   respuestasEjecucionExamen: z.lazy(() => PreguntasEjecucionExamenUncheckedUpdateManyWithoutRespuestaNestedInputSchema).optional()
 }).strict();
 
@@ -9849,6 +9876,7 @@ export const RespuestaUncheckedUpdateManyWithoutPreguntaInputSchema: z.ZodType<P
   video: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   audio: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   correcta: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const PreguntasEjecucionExamenUpdateWithoutPreguntaInputSchema: z.ZodType<Prisma.PreguntasEjecucionExamenUpdateWithoutPreguntaInput> = z.object({

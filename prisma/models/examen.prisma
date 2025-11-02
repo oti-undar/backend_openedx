@@ -64,12 +64,13 @@ model Pregunta {
 }
 
 model Respuesta {
-    id        String  @id @default(cuid())
-    respuesta String
-    img       String?
-    video     String?
-    audio     String?
-    correcta  Boolean @default(false)
+    id                String  @id @default(cuid())
+    respuesta         String
+    img               String?
+    video             String?
+    audio             String?
+    correcta          Boolean @default(false)
+    retroalimentacion String?
 
     pregunta_id               String
     pregunta                  Pregunta                   @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

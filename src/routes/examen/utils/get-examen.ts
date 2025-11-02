@@ -33,6 +33,7 @@ export async function getExamen({
               video: true,
               audio: true,
               correcta: incluirCorrecta,
+              retroalimentacion: true,
             },
           },
           indicadores: true,
