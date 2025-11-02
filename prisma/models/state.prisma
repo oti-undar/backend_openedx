@@ -12,4 +12,6 @@ model State {
     name StateType @unique
 
     examenes Examen[]
+
+    @@map("state")
 }

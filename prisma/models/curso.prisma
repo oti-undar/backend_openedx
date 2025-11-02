@@ -8,6 +8,8 @@ model Curso {
     created_at DateTime  @default(now())
     updated_at DateTime  @updatedAt
     deleted_at DateTime?
+
+    @@map("curso")
 }
 
 model UsuarioCurso {
@@ -26,4 +28,5 @@ model UsuarioCurso {
     deleted_at DateTime?
 
     @@unique([user_id, curso_id])
+    @@map("usuariocurso")
 }

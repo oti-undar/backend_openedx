@@ -16,6 +16,7 @@ model RubricaHolistica {
     examenes         Examen[]
 
     @@unique([name, user_id])
+    @@map("rubricaholistica")
 }
 
 model RubricaAnalitica {
@@ -36,6 +37,7 @@ model RubricaAnalitica {
     examenes    Examen[]
 
     @@unique([name, user_id])
+    @@map("rubricaanalitica")
 }
 
 model Indicadores {
@@ -53,6 +55,7 @@ model Indicadores {
     niveles_de_logro NivelesDeLogro[]
 
     @@unique([name, rubrica_analitica_id])
+    @@map("indicadores")
 }
 
 model NivelesDeLogro {
@@ -73,4 +76,5 @@ model NivelesDeLogro {
 
     @@unique([name, indicador_id])
     @@unique([name, rubrica_holistica_id])
+    @@map("nivelesdelogro")
 }

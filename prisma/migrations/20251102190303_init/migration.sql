@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE `Curso` (
+CREATE TABLE `curso` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -10,7 +10,7 @@ CREATE TABLE `Curso` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `UsuarioCurso` (
+CREATE TABLE `usuariocurso` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `curso_id` VARCHAR(191) NOT NULL,
@@ -19,12 +19,12 @@ CREATE TABLE `UsuarioCurso` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `UsuarioCurso_user_id_curso_id_key`(`user_id`, `curso_id`),
+    UNIQUE INDEX `usuariocurso_user_id_curso_id_key`(`user_id`, `curso_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `EjecucionExamen` (
+CREATE TABLE `ejecucionexamen` (
     `id` VARCHAR(191) NOT NULL,
     `user_id` INTEGER NOT NULL,
     `examen_id` VARCHAR(191) NOT NULL,
@@ -34,13 +34,13 @@ CREATE TABLE `EjecucionExamen` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `EjecucionExamen_pregunta_ejecucion_actual_id_key`(`pregunta_ejecucion_actual_id`),
-    UNIQUE INDEX `EjecucionExamen_user_id_examen_id_key`(`user_id`, `examen_id`),
+    UNIQUE INDEX `ejecucionexamen_pregunta_ejecucion_actual_id_key`(`pregunta_ejecucion_actual_id`),
+    UNIQUE INDEX `ejecucionexamen_user_id_examen_id_key`(`user_id`, `examen_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `PreguntasEjecucionExamen` (
+CREATE TABLE `preguntasejecucionexamen` (
     `id` VARCHAR(191) NOT NULL,
     `ejecucion_examen_id` VARCHAR(191) NOT NULL,
     `pregunta_id` VARCHAR(191) NOT NULL,
@@ -51,12 +51,12 @@ CREATE TABLE `PreguntasEjecucionExamen` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `PreguntasEjecucionExamen_pregunta_id_ejecucion_examen_id_key`(`pregunta_id`, `ejecucion_examen_id`),
+    UNIQUE INDEX `preguntasejecucionexamen_pregunta_id_ejecucion_examen_id_key`(`pregunta_id`, `ejecucion_examen_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Examen` (
+CREATE TABLE `examen` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
@@ -77,12 +77,12 @@ CREATE TABLE `Examen` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `Examen_pregunta_actual_sync_id_key`(`pregunta_actual_sync_id`),
+    UNIQUE INDEX `examen_pregunta_actual_sync_id_key`(`pregunta_actual_sync_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Pregunta` (
+CREATE TABLE `pregunta` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
@@ -97,7 +97,7 @@ CREATE TABLE `Pregunta` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Respuesta` (
+CREATE TABLE `respuesta` (
     `id` VARCHAR(191) NOT NULL,
     `respuesta` VARCHAR(191) NOT NULL,
     `img` VARCHAR(191) NULL,
@@ -110,7 +110,7 @@ CREATE TABLE `Respuesta` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Historial` (
+CREATE TABLE `historial` (
     `id` VARCHAR(191) NOT NULL,
     `user_id` INTEGER NOT NULL,
     `examen_id` VARCHAR(191) NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE `Historial` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `RubricaHolistica` (
+CREATE TABLE `rubricaholistica` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `competencias` TEXT NOT NULL,
@@ -134,12 +134,12 @@ CREATE TABLE `RubricaHolistica` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `RubricaHolistica_name_user_id_key`(`name`, `user_id`),
+    UNIQUE INDEX `rubricaholistica_name_user_id_key`(`name`, `user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `RubricaAnalitica` (
+CREATE TABLE `rubricaanalitica` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `competencias` TEXT NOT NULL,
@@ -150,12 +150,12 @@ CREATE TABLE `RubricaAnalitica` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `RubricaAnalitica_name_user_id_key`(`name`, `user_id`),
+    UNIQUE INDEX `rubricaanalitica_name_user_id_key`(`name`, `user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Indicadores` (
+CREATE TABLE `indicadores` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `rubrica_analitica_id` VARCHAR(191) NOT NULL,
@@ -163,12 +163,12 @@ CREATE TABLE `Indicadores` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `Indicadores_name_rubrica_analitica_id_key`(`name`, `rubrica_analitica_id`),
+    UNIQUE INDEX `indicadores_name_rubrica_analitica_id_key`(`name`, `rubrica_analitica_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `NivelesDeLogro` (
+CREATE TABLE `nivelesdelogro` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `criterios` TEXT NOT NULL,
@@ -179,22 +179,22 @@ CREATE TABLE `NivelesDeLogro` (
     `updated_at` DATETIME(3) NOT NULL,
     `deleted_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `NivelesDeLogro_name_indicador_id_key`(`name`, `indicador_id`),
-    UNIQUE INDEX `NivelesDeLogro_name_rubrica_holistica_id_key`(`name`, `rubrica_holistica_id`),
+    UNIQUE INDEX `nivelesdelogro_name_indicador_id_key`(`name`, `indicador_id`),
+    UNIQUE INDEX `nivelesdelogro_name_rubrica_holistica_id_key`(`name`, `rubrica_holistica_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `State` (
+CREATE TABLE `state` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` ENUM('Activo', 'Inconcluso', 'Disponible', 'Suspendido', 'Inactivo', 'Finalizado') NOT NULL,
 
-    UNIQUE INDEX `State_name_key`(`name`),
+    UNIQUE INDEX `state_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `User` (
+CREATE TABLE `user` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `is_superuser` BOOLEAN NOT NULL DEFAULT false,
     `is_staff` BOOLEAN NOT NULL DEFAULT false,
@@ -220,76 +220,76 @@ CREATE TABLE `_IndicadoresToPregunta` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `UsuarioCurso` ADD CONSTRAINT `UsuarioCurso_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `usuariocurso` ADD CONSTRAINT `usuariocurso_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `UsuarioCurso` ADD CONSTRAINT `UsuarioCurso_curso_id_fkey` FOREIGN KEY (`curso_id`) REFERENCES `Curso`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `usuariocurso` ADD CONSTRAINT `usuariocurso_curso_id_fkey` FOREIGN KEY (`curso_id`) REFERENCES `curso`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `EjecucionExamen` ADD CONSTRAINT `EjecucionExamen_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `ejecucionexamen` ADD CONSTRAINT `ejecucionexamen_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `EjecucionExamen` ADD CONSTRAINT `EjecucionExamen_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `Examen`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ejecucionexamen` ADD CONSTRAINT `ejecucionexamen_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `examen`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `EjecucionExamen` ADD CONSTRAINT `EjecucionExamen_pregunta_ejecucion_actual_id_fkey` FOREIGN KEY (`pregunta_ejecucion_actual_id`) REFERENCES `PreguntasEjecucionExamen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `ejecucionexamen` ADD CONSTRAINT `ejecucionexamen_pregunta_ejecucion_actual_id_fkey` FOREIGN KEY (`pregunta_ejecucion_actual_id`) REFERENCES `preguntasejecucionexamen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PreguntasEjecucionExamen` ADD CONSTRAINT `PreguntasEjecucionExamen_ejecucion_examen_id_fkey` FOREIGN KEY (`ejecucion_examen_id`) REFERENCES `EjecucionExamen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `preguntasejecucionexamen` ADD CONSTRAINT `preguntasejecucionexamen_ejecucion_examen_id_fkey` FOREIGN KEY (`ejecucion_examen_id`) REFERENCES `ejecucionexamen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PreguntasEjecucionExamen` ADD CONSTRAINT `PreguntasEjecucionExamen_pregunta_id_fkey` FOREIGN KEY (`pregunta_id`) REFERENCES `Pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `preguntasejecucionexamen` ADD CONSTRAINT `preguntasejecucionexamen_pregunta_id_fkey` FOREIGN KEY (`pregunta_id`) REFERENCES `pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PreguntasEjecucionExamen` ADD CONSTRAINT `PreguntasEjecucionExamen_respuesta_id_fkey` FOREIGN KEY (`respuesta_id`) REFERENCES `Respuesta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `preguntasejecucionexamen` ADD CONSTRAINT `preguntasejecucionexamen_respuesta_id_fkey` FOREIGN KEY (`respuesta_id`) REFERENCES `respuesta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_curso_id_fkey` FOREIGN KEY (`curso_id`) REFERENCES `Curso`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_curso_id_fkey` FOREIGN KEY (`curso_id`) REFERENCES `curso`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_rubrica_holistica_id_fkey` FOREIGN KEY (`rubrica_holistica_id`) REFERENCES `RubricaHolistica`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_rubrica_holistica_id_fkey` FOREIGN KEY (`rubrica_holistica_id`) REFERENCES `rubricaholistica`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_rubrica_analitica_id_fkey` FOREIGN KEY (`rubrica_analitica_id`) REFERENCES `RubricaAnalitica`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_rubrica_analitica_id_fkey` FOREIGN KEY (`rubrica_analitica_id`) REFERENCES `rubricaanalitica`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_state_id_fkey` FOREIGN KEY (`state_id`) REFERENCES `State`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_state_id_fkey` FOREIGN KEY (`state_id`) REFERENCES `state`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Examen` ADD CONSTRAINT `Examen_pregunta_actual_sync_id_fkey` FOREIGN KEY (`pregunta_actual_sync_id`) REFERENCES `Pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `examen` ADD CONSTRAINT `examen_pregunta_actual_sync_id_fkey` FOREIGN KEY (`pregunta_actual_sync_id`) REFERENCES `pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Pregunta` ADD CONSTRAINT `Pregunta_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `Examen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `pregunta` ADD CONSTRAINT `pregunta_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `examen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Respuesta` ADD CONSTRAINT `Respuesta_pregunta_id_fkey` FOREIGN KEY (`pregunta_id`) REFERENCES `Pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `respuesta` ADD CONSTRAINT `respuesta_pregunta_id_fkey` FOREIGN KEY (`pregunta_id`) REFERENCES `pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Historial` ADD CONSTRAINT `Historial_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `historial` ADD CONSTRAINT `historial_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Historial` ADD CONSTRAINT `Historial_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `Examen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `historial` ADD CONSTRAINT `historial_examen_id_fkey` FOREIGN KEY (`examen_id`) REFERENCES `examen`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RubricaHolistica` ADD CONSTRAINT `RubricaHolistica_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `rubricaholistica` ADD CONSTRAINT `rubricaholistica_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RubricaAnalitica` ADD CONSTRAINT `RubricaAnalitica_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `rubricaanalitica` ADD CONSTRAINT `rubricaanalitica_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Indicadores` ADD CONSTRAINT `Indicadores_rubrica_analitica_id_fkey` FOREIGN KEY (`rubrica_analitica_id`) REFERENCES `RubricaAnalitica`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `indicadores` ADD CONSTRAINT `indicadores_rubrica_analitica_id_fkey` FOREIGN KEY (`rubrica_analitica_id`) REFERENCES `rubricaanalitica`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `NivelesDeLogro` ADD CONSTRAINT `NivelesDeLogro_rubrica_holistica_id_fkey` FOREIGN KEY (`rubrica_holistica_id`) REFERENCES `RubricaHolistica`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `nivelesdelogro` ADD CONSTRAINT `nivelesdelogro_rubrica_holistica_id_fkey` FOREIGN KEY (`rubrica_holistica_id`) REFERENCES `rubricaholistica`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `NivelesDeLogro` ADD CONSTRAINT `NivelesDeLogro_indicador_id_fkey` FOREIGN KEY (`indicador_id`) REFERENCES `Indicadores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `nivelesdelogro` ADD CONSTRAINT `nivelesdelogro_indicador_id_fkey` FOREIGN KEY (`indicador_id`) REFERENCES `indicadores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_IndicadoresToPregunta` ADD CONSTRAINT `_IndicadoresToPregunta_A_fkey` FOREIGN KEY (`A`) REFERENCES `Indicadores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_IndicadoresToPregunta` ADD CONSTRAINT `_IndicadoresToPregunta_A_fkey` FOREIGN KEY (`A`) REFERENCES `indicadores`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_IndicadoresToPregunta` ADD CONSTRAINT `_IndicadoresToPregunta_B_fkey` FOREIGN KEY (`B`) REFERENCES `Pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_IndicadoresToPregunta` ADD CONSTRAINT `_IndicadoresToPregunta_B_fkey` FOREIGN KEY (`B`) REFERENCES `pregunta`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

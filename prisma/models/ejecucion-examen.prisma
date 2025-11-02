@@ -19,6 +19,7 @@ model EjecucionExamen {
     deleted_at DateTime?
 
     @@unique([user_id, examen_id])
+    @@map("ejecucionexamen")
 }
 
 model PreguntasEjecucionExamen {
@@ -43,4 +44,5 @@ model PreguntasEjecucionExamen {
     deleted_at DateTime?
 
     @@unique([pregunta_id, ejecucion_examen_id])
+    @@map("preguntasejecucionexamen")
 }
