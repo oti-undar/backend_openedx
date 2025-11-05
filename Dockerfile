@@ -28,6 +28,8 @@ COPY --from=builder --chown=hono:nodejs /app/dist /app/dist
 COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 COPY --from=builder --chown=hono:nodejs /app/prisma /app/prisma
 
+RUN mkdir -p /app/public/examenes && chown -R hono:nodejs /app/public
+
 USER hono
 EXPOSE 3000
 
