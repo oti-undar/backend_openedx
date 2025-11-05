@@ -156,43 +156,45 @@ import { siguientePreguntaExamen } from './routes/examen/helpers/siguiente-pregu
 import { finalizarExamen } from './routes/examen/helpers/finalizar-examen.js'
 ;(async () => {
   try {
-    const examenes = await db.examen.findMany({
-      where: {
-        state: {
-          OR: [{ name: StateType.Disponible }, { name: StateType.Activo }],
+    await db.$transaction(async prisma => {
+      const examenes = await prisma.examen.findMany({
+        where: {
+          state: {
+            OR: [{ name: StateType.Disponible }, { name: StateType.Activo }],
+          },
+          OR: [
+            {
+              final_examen: {
+                not: null,
+              },
+            },
+            {
+              inicio_examen: {
+                not: null,
+              },
+            },
+          ],
         },
-        OR: [
-          {
-            final_examen: {
-              not: null,
-            },
-          },
-          {
-            inicio_examen: {
-              not: null,
-            },
-          },
-        ],
-      },
-      select: {
-        id: true,
-        final_examen: true,
-        inicio_examen: true,
-      },
-    })
+        select: {
+          id: true,
+          final_examen: true,
+          inicio_examen: true,
+        },
+      })
 
-    examenes.forEach(examen => {
-      if (examen.final_examen)
-        createJob(examen.id, examen.final_examen, async () => {
-          finalizarJobExamen(examen.id)
-        })
-      if (examen.inicio_examen)
-        createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
-          empezarJobExamen(examen.id)
-        })
-    })
+      examenes.forEach(examen => {
+        if (examen.final_examen)
+          createJob(examen.id, examen.final_examen, async () => {
+            finalizarJobExamen(examen.id, prisma)
+          })
+        if (examen.inicio_examen)
+          createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
+            empezarJobExamen(examen.id, prisma)
+          })
+      })
 
-    console.log('🚀 ~ file: index.ts:51 ~ listJobs():', listJobs())
+      console.log('🚀 ~ file: index.ts:51 ~ listJobs():', listJobs())
+    })
   } catch (e) {
     console.error('🚀 ~ file: index.ts:197 ~ e:', e)
   }

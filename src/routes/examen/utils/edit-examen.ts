@@ -122,11 +122,11 @@ export async function editExamen({
 
   if (examen.final_examen)
     editJob(examen.id, examen.final_examen, async () => {
-      finalizarJobExamen(examen.id)
+      finalizarJobExamen(examen.id, prisma)
     })
   if (examen.inicio_examen)
     editJob(examen.id + 'inicio', examen.inicio_examen, async () => {
-      empezarJobExamen(examen.id)
+      empezarJobExamen(examen.id, prisma)
     })
 
   return examen

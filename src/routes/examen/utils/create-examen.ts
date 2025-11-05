@@ -158,11 +158,11 @@ export async function createExamen({
 
   if (examen.final_examen)
     createJob(examen.id, examen.final_examen, async () => {
-      finalizarJobExamen(examen.id)
+      finalizarJobExamen(examen.id, prisma)
     })
   if (examen.inicio_examen)
     createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
-      empezarJobExamen(examen.id)
+      empezarJobExamen(examen.id, prisma)
     })
 
   return examen
