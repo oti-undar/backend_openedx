@@ -3,11 +3,6 @@ import type { CreateExamenCompleteSchemaProps } from '../docs/doc-create-examen.
 import { guardarArchivo } from '@/helpers/guardar-archivo.js'
 import cuid from 'cuid'
 import type { Examen } from '@prisma/client'
-import { createJob, editJob } from '@/helpers/jobs.js'
-import {
-  empezarJobExamen,
-  finalizarJobExamen,
-} from '../helpers/finalizar-job-examen.js'
 
 export async function editExamen({
   item,
@@ -119,15 +114,6 @@ export async function editExamen({
       },
     },
   })
-
-  if (examen.final_examen)
-    editJob(examen.id, examen.final_examen, async () => {
-      finalizarJobExamen(examen.id, prisma)
-    })
-  if (examen.inicio_examen)
-    editJob(examen.id + 'inicio', examen.inicio_examen, async () => {
-      empezarJobExamen(examen.id, prisma)
-    })
 
   return examen
 }

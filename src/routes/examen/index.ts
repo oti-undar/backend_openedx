@@ -18,6 +18,11 @@ import {
   type EditExamenCompleteSchemaProps,
 } from './docs/doc-edit-examen.js'
 import { editExamen } from './utils/edit-examen.js'
+import { createJob } from '@/helpers/jobs.js'
+import {
+  empezarJobExamen,
+  finalizarJobExamen,
+} from './helpers/finalizar-job-examen.js'
 
 const examen = new OpenAPIHono()
 
@@ -26,7 +31,26 @@ examen.openapi(EditExamenRoute, async c => {
   const input = c.get('formDataValidated') as EditExamenCompleteSchemaProps
   try {
     const examen = await db.$transaction(async prisma => {
-      return await editExamen({ item: input, prisma, id })
+      const examen_actualizado = await editExamen({ item: input, prisma, id })
+
+      if (examen_actualizado.final_examen)
+        createJob(
+          examen_actualizado.id,
+          examen_actualizado.final_examen,
+          async () => {
+            finalizarJobExamen(examen_actualizado.id)
+          }
+        )
+      if (examen_actualizado.inicio_examen)
+        createJob(
+          examen_actualizado.id + 'inicio',
+          examen_actualizado.inicio_examen,
+          async () => {
+            empezarJobExamen(examen_actualizado.id)
+          }
+        )
+
+      return examen_actualizado
     })
     return c.json(examen, 200)
   } catch (error) {
@@ -55,7 +79,22 @@ examen.openapi(createExamenRoute, async c => {
   const input = c.get('formDataValidated') as CreateExamenCompleteSchemaProps
   try {
     const examen = await db.$transaction(async prisma => {
-      return await createExamen({ item: input, prisma })
+      const examen_creado = await createExamen({ item: input, prisma })
+
+      if (examen_creado.final_examen)
+        createJob(examen_creado.id, examen_creado.final_examen, async () => {
+          finalizarJobExamen(examen_creado.id)
+        })
+      if (examen_creado.inicio_examen)
+        createJob(
+          examen_creado.id + 'inicio',
+          examen_creado.inicio_examen,
+          async () => {
+            empezarJobExamen(examen_creado.id)
+          }
+        )
+
+      return examen_creado
     })
     return c.json(examen, 200)
   } catch (error) {

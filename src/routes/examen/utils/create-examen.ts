@@ -2,11 +2,6 @@ import type { dbTransaction } from '@/db/db.js'
 import type { CreateExamenCompleteSchemaProps } from '../docs/doc-create-examen.js'
 import { guardarArchivo } from '@/helpers/guardar-archivo.js'
 import cuid from 'cuid'
-import { createJob } from '@/helpers/jobs.js'
-import {
-  empezarJobExamen,
-  finalizarJobExamen,
-} from '../helpers/finalizar-job-examen.js'
 import { TipoExamen } from '@prisma/client'
 import { createEjecucionExamen } from '@/routes/ejecucion-examen/utils/create-ejecucion-examen.js'
 
@@ -155,15 +150,6 @@ export async function createExamen({
       })
     )
   }
-
-  if (examen.final_examen)
-    createJob(examen.id, examen.final_examen, async () => {
-      finalizarJobExamen(examen.id, prisma)
-    })
-  if (examen.inicio_examen)
-    createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
-      empezarJobExamen(examen.id, prisma)
-    })
 
   return examen
 }
