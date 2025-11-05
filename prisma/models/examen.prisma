@@ -7,7 +7,7 @@ enum TipoExamen {
 model Examen {
     id          String  @id @default(cuid())
     title       String
-    description String?
+    description String? @db.Text
     img         String?
     video       String?
     audio       String?
