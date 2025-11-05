@@ -3,7 +3,6 @@ import { io } from '@/index.js'
 import { StateType } from '@prisma/client'
 import { siguientePreguntaExamen } from './siguiente-pregunta-examen.js'
 import { finalizarExamen } from './finalizar-examen.js'
-import { listJobs } from '@/helpers/jobs.js'
 
 export const finalizarJobExamen = async (examen_id: string) => {
   await db.$transaction(async prisma => {
@@ -31,7 +30,15 @@ export const finalizarJobExamen = async (examen_id: string) => {
 
 export const empezarJobExamen = async (examen_id: string) => {
   console.log('🚀 ~ file: finalizar-job-examen.ts:33 ~ examen_id:', examen_id)
-  await db.examen.update({
+  const examen = await db.examen.findUnique({ where: { id: examen_id } })
+  if (!examen) throw new Error('Examen no encontrado')
+  console.log('🚀 ~ file: finalizar-job-examen.ts:35 ~ examen:', examen)
+
+  const state = await db.state.findUnique({
+    where: { name: StateType.Disponible },
+  })
+  if (!state) throw new Error('State "Disponible" no encontrado')
+  const examen_actualizado = await db.examen.update({
     where: {
       id: examen_id,
     },
@@ -43,4 +50,8 @@ export const empezarJobExamen = async (examen_id: string) => {
       },
     },
   })
+  console.log(
+    '🚀 ~ file: finalizar-job-examen.ts:53 ~ examen_actualizado:',
+    examen_actualizado
+  )
 }
