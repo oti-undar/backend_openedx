@@ -156,6 +156,10 @@ export async function createExamen({
     )
   }
 
+  console.log(
+    '🚀 ~ file: create-examen.ts:160 ~ examen:',
+    JSON.stringify(examen, null, 2)
+  )
   if (examen.final_examen)
     createJob(examen.id, examen.final_examen, async () => {
       finalizarJobExamen(examen.id)

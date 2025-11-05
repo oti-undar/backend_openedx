@@ -30,6 +30,7 @@ export const finalizarJobExamen = async (examen_id: string) => {
 }
 
 export const empezarJobExamen = async (examen_id: string) => {
+  console.log('🚀 ~ file: finalizar-job-examen.ts:33 ~ examen_id:', examen_id)
   await db.examen.update({
     where: {
       id: examen_id,
