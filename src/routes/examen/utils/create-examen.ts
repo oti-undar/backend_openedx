@@ -31,8 +31,6 @@ export async function createExamen({
     tipo_examen = tipo_archivo
   }
 
-  // Tesd de cambio
-
   const examen = await prisma.examen.create({
     data: {
       ...examenData,
