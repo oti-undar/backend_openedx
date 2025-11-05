@@ -31,27 +31,18 @@ examen.openapi(EditExamenRoute, async c => {
   const input = c.get('formDataValidated') as EditExamenCompleteSchemaProps
   try {
     const examen = await db.$transaction(async prisma => {
-      const examen_actualizado = await editExamen({ item: input, prisma, id })
-
-      if (examen_actualizado.final_examen)
-        createJob(
-          examen_actualizado.id,
-          examen_actualizado.final_examen,
-          async () => {
-            finalizarJobExamen(examen_actualizado.id)
-          }
-        )
-      if (examen_actualizado.inicio_examen)
-        createJob(
-          examen_actualizado.id + 'inicio',
-          examen_actualizado.inicio_examen,
-          async () => {
-            empezarJobExamen(examen_actualizado.id)
-          }
-        )
-
-      return examen_actualizado
+      return await editExamen({ item: input, prisma, id })
     })
+
+    if (examen.final_examen)
+      createJob(examen.id, examen.final_examen, async () => {
+        finalizarJobExamen(examen.id)
+      })
+    if (examen.inicio_examen)
+      createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
+        empezarJobExamen(examen.id)
+      })
+
     return c.json(examen, 200)
   } catch (error) {
     console.error(error)
@@ -79,23 +70,18 @@ examen.openapi(createExamenRoute, async c => {
   const input = c.get('formDataValidated') as CreateExamenCompleteSchemaProps
   try {
     const examen = await db.$transaction(async prisma => {
-      const examen_creado = await createExamen({ item: input, prisma })
-
-      if (examen_creado.final_examen)
-        createJob(examen_creado.id, examen_creado.final_examen, async () => {
-          finalizarJobExamen(examen_creado.id)
-        })
-      if (examen_creado.inicio_examen)
-        createJob(
-          examen_creado.id + 'inicio',
-          examen_creado.inicio_examen,
-          async () => {
-            empezarJobExamen(examen_creado.id)
-          }
-        )
-
-      return examen_creado
+      return await createExamen({ item: input, prisma })
     })
+
+    if (examen.final_examen)
+      createJob(examen.id, examen.final_examen, async () => {
+        finalizarJobExamen(examen.id)
+      })
+    if (examen.inicio_examen)
+      createJob(examen.id + 'inicio', examen.inicio_examen, async () => {
+        empezarJobExamen(examen.id)
+      })
+
     return c.json(examen, 200)
   } catch (error) {
     console.error(error)
