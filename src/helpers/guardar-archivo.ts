@@ -1,4 +1,5 @@
 import fs from 'fs'
+import path from 'path'
 
 export async function guardarArchivo({
   archivo,
@@ -12,9 +13,11 @@ export async function guardarArchivo({
 
   const extension = '.' + archivo.type.split('/')[1]
   const file = `${path_file_sin_extension}${extension}`
-  const path = `public${file}`
+  const fullPath = path.join('public', file)
 
-  await fs.promises.writeFile(path, buffer)
+  await fs.promises.mkdir(path.dirname(fullPath), { recursive: true })
+
+  await fs.promises.writeFile(fullPath, buffer)
 
   const tipoMime = archivo.type.split('/')[0]
   const tipo: 'img' | 'audio' | 'video' | null =
