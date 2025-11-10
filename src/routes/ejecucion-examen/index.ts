@@ -12,6 +12,8 @@ import { getEjecucionesExamenRoute } from './docs/doc-get-ejecuciones-examen.js'
 import { getEjecucionesExamen } from './utils/get-ejecuciones-examen.js'
 import { updatePreguntaEjecucionExamenRespuestaRoute } from './docs/doc-update-pregunta-ejecucion-examen-respuesta.js'
 import { updatePreguntaEjecucionExamenRespuesta } from './utils/update-pregunta-ejecucion-examen-respuesta.js'
+import { getNotaEjecucionExamenRoute } from './docs/doc-get-nota-ejecucion-examen.js'
+import { getNotaEjecucionExamen } from './utils/get-nota-ejecucion-examen.js'
 
 const ejecucion_examen = new OpenAPIHono()
 
@@ -53,6 +55,23 @@ ejecucion_examen.openapi(
     }
   }
 )
+
+ejecucion_examen.openapi(getNotaEjecucionExamenRoute, async c => {
+  const input = c.req.valid('query')
+  const { id } = c.req.valid('param')
+  try {
+    const ejecucion_examen = await db.$transaction(async prisma => {
+      return await getNotaEjecucionExamen({
+        item: { ...input, examen_id: id },
+        prisma,
+      })
+    })
+    return c.json(ejecucion_examen, 200)
+  } catch (error) {
+    console.error(error)
+    return c.json({ error }, 409)
+  }
+})
 
 ejecucion_examen.openapi(createEjecucionExamenRoute, async c => {
   const input = c.req.valid('json')
