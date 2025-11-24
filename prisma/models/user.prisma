@@ -9,6 +9,7 @@ model User {
     first_name String
     last_name  String
     email      String
+    avatar     String?
 
     rubricas_holisticas RubricaHolistica[]
     rubricas_analiticas RubricaAnalitica[]
