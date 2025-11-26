@@ -8,6 +8,7 @@ import state from './routes/state/index.js'
 import rubrica from './routes/rubrica/index.js'
 import apiOpenEdx from './routes/api_open_edx/index.js'
 import ejecucion_examen from './routes/ejecucion-examen/index.js'
+import usuario from './routes/usuario/index.js'
 import { createServer } from 'http'
 import { Server as SocketIOServer } from 'socket.io'
 import { db } from './db/db.js'
@@ -60,17 +61,17 @@ const io = new SocketIOServer(server, {
   },
 })
 
-io.on('connection', socket => {
-  socket.on('init-examen', data => socket.emit('init-examen', data))
+io.on('connection', (socket) => {
+  socket.on('init-examen', (data) => socket.emit('init-examen', data))
 
-  socket.on('join_room', room => {
+  socket.on('join_room', (room) => {
     socket.join(room)
     console.log(`Socket ${socket.id} se unió a la sala ${room}`)
   })
 
   socket.on('message_room', async ({ room, event, data = {} }) => {
     if (event === 'init-examen') {
-      await db.$transaction(async prisma => {
+      await db.$transaction(async (prisma) => {
         const { pregunta_actual_sync_id, examen_id, user_id } = data
         const examen = await prisma.examen.findUnique({
           where: {
@@ -94,10 +95,10 @@ io.on('connection', socket => {
           },
         })
         const alumnos =
-          examen?.curso.usuarios.map(usuario => usuario.user_id) || []
+          examen?.curso.usuarios.map((usuario) => usuario.user_id) || []
 
         const ejecuciones = await Promise.all(
-          alumnos.map(async alumnoId => {
+          alumnos.map(async (alumnoId) => {
             const ejecucion = await createEjecucionExamen({
               item: {
                 user_id: alumnoId,
@@ -181,7 +182,7 @@ import { finalizarExamen } from './routes/examen/helpers/finalizar-examen.js'
       },
     })
 
-    examenes.forEach(examen => {
+    examenes.forEach((examen) => {
       if (examen.final_examen)
         createJob(examen.id, examen.final_examen, async () => {
           finalizarJobExamen(examen.id)
@@ -201,7 +202,7 @@ import { finalizarExamen } from './routes/examen/helpers/finalizar-examen.js'
 const app = new OpenAPIHono()
 app.use('*', cors())
 
-app.get('/', c => {
+app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
@@ -211,8 +212,9 @@ app.route('/curso', curso)
 app.route('/state', state)
 app.route('/api_open_edx', apiOpenEdx)
 app.route('/ejecucion_examen', ejecucion_examen)
+app.route('/usuario', usuario)
 
-app.get('/ui', c => c.html(docUi['Stoplight Elements']))
+app.get('/ui', (c) => c.html(docUi['Stoplight Elements']))
 app.doc('/doc', openapiInfo)
 
 app.use('*', serveStatic({ root: './public' }))
