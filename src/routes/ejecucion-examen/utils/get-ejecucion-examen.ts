@@ -28,9 +28,23 @@ export async function getEjecucionExamen({
       },
       preguntas_resueltas: {
         where: {
-          respuesta_id: {
-            not: null,
-          },
+          OR: [
+            {
+              respuesta_id: {
+                not: null,
+              },
+              pregunta: {
+                duracion: null,
+              },
+            },
+            {
+              pregunta: {
+                duracion: {
+                  not: null,
+                },
+              },
+            },
+          ],
         },
         include: {
           pregunta: true,
@@ -52,7 +66,7 @@ export async function getEjecucionExamen({
       pregunta: {
         ...result.pregunta_ejecucion_actual?.pregunta,
         respuestas: result.pregunta_ejecucion_actual?.pregunta?.respuestas.map(
-          respuesta => ({
+          (respuesta) => ({
             ...respuesta,
             correcta: undefined,
           })
