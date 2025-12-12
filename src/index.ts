@@ -20,38 +20,58 @@ interface NodeRequestInit extends RequestInit {
 }
 
 const server = createServer(async (req, res) => {
-  const url = `http://${req.headers.host}${req.url}`
-
-  const init: NodeRequestInit = {
-    method: req.method,
-    headers: req.headers as any,
-  }
-
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    init.body = req as any // Node IncomingMessage es Readable
-    init.duplex = 'half' // 👈 obligatorio cuando hay body stream
-  }
-
-  const request = new Request(url, init)
-
-  const response = await app.fetch(request)
-
-  res.writeHead(response.status, Object.fromEntries(response.headers))
-
-  if (response.body) {
-    const reader = response.body.getReader()
-    const push = async () => {
-      const { done, value } = await reader.read()
-      if (done) {
-        res.end()
-        return
-      }
-      res.write(value)
-      push()
+  try {
+    const host = req.headers.host
+    if (!host) {
+      res.writeHead(400)
+      res.end('Bad Request: missing host')
+      return
     }
-    push()
-  } else {
-    res.end()
+
+    let url: URL
+    try {
+      url = new URL(req.url!, `http://${host}`)
+    } catch (err) {
+      res.writeHead(400)
+      res.end('Bad Request: invalid URL')
+      return
+    }
+
+    const init: NodeRequestInit = {
+      method: req.method,
+      headers: req.headers as any,
+    }
+
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      init.body = req as any // Node IncomingMessage es Readable
+      init.duplex = 'half' // 👈 obligatorio cuando hay body stream
+    }
+
+    const request = new Request(url.toString(), init)
+
+    const response = await app.fetch(request)
+
+    res.writeHead(response.status, Object.fromEntries(response.headers))
+
+    if (response.body) {
+      const reader = response.body.getReader()
+      const push = async () => {
+        const { done, value } = await reader.read()
+        if (done) {
+          res.end()
+          return
+        }
+        res.write(value)
+        push()
+      }
+      push()
+    } else {
+      res.end()
+    }
+  } catch (err) {
+    console.error(err)
+    res.writeHead(500)
+    res.end('Internal Server Error')
   }
 })
 
