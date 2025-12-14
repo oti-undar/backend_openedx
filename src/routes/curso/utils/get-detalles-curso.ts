@@ -60,6 +60,11 @@ export async function getDetallesCurso({
                     },
                   },
                 },
+                where: {
+                  examen: {
+                    curso_id: id,
+                  },
+                },
               },
             },
           },
