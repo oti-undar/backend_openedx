@@ -6,7 +6,7 @@ enum TipoExamen {
 
 model Examen {
     id          String  @id @default(cuid())
-    title       String
+    title       String  @db.Text
     description String? @db.Text
     img         String?
     video       String?
@@ -49,7 +49,7 @@ model Examen {
 
 model Pregunta {
     id          String   @id @default(cuid())
-    title       String
+    title       String   @db.Text
     description String?
     img         String?
     video       String?
@@ -69,7 +69,7 @@ model Pregunta {
 
 model Respuesta {
     id                String  @id @default(cuid())
-    respuesta         String
+    respuesta         String  @db.Text
     img               String?
     video             String?
     audio             String?
