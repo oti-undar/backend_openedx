@@ -34,8 +34,9 @@ model PreguntasEjecucionExamen {
     respuesta_id String?
     respuesta    Respuesta? @relation(fields: [respuesta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    inicio DateTime?
-    final  DateTime?
+    inicio            DateTime?
+    final             DateTime?
+    retroalimentacion String?   @db.Text
 
     ejecucion_actual_de EjecucionExamen? @relation("pregunta_ejecucion_actual")
 

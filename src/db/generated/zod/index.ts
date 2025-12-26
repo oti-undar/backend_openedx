@@ -39,7 +39,7 @@ export const UsuarioCursoScalarFieldEnumSchema = z.enum(['id','user_id','curso_i
 
 export const EjecucionExamenScalarFieldEnumSchema = z.enum(['id','user_id','examen_id','pregunta_ejecucion_actual_id','fin_examen','created_at','updated_at','deleted_at']);
 
-export const PreguntasEjecucionExamenScalarFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id','inicio','final','created_at','updated_at','deleted_at']);
+export const PreguntasEjecucionExamenScalarFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id','inicio','final','retroalimentacion','created_at','updated_at','deleted_at']);
 
 export const ExamenScalarFieldEnumSchema = z.enum(['id','title','description','img','video','audio','peso','user_id','curso_id','inicio_examen','final_examen','tipo_examen','rubrica_holistica_id','rubrica_analitica_id','state_id','pregunta_actual_sync_id','created_at','updated_at','deleted_at']);
 
@@ -71,7 +71,7 @@ export const UsuarioCursoOrderByRelevanceFieldEnumSchema = z.enum(['curso_id']);
 
 export const EjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','examen_id','pregunta_ejecucion_actual_id']);
 
-export const PreguntasEjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id']);
+export const PreguntasEjecucionExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','ejecucion_examen_id','pregunta_id','respuesta_id','retroalimentacion']);
 
 export const ExamenOrderByRelevanceFieldEnumSchema = z.enum(['id','title','description','img','video','audio','curso_id','rubrica_holistica_id','rubrica_analitica_id','pregunta_actual_sync_id']);
 
@@ -91,7 +91,7 @@ export const NivelesDeLogroOrderByRelevanceFieldEnumSchema = z.enum(['name','cri
 
 export const UserOrderByRelevanceFieldEnumSchema = z.enum(['username','first_name','last_name','email','avatar']);
 
-export const TipoExamenSchema = z.enum(['Sync','Async','Solo']);
+export const TipoExamenSchema = z.enum(['Sync','Async','Solo','Alumno']);
 
 export type TipoExamenType = `${z.infer<typeof TipoExamenSchema>}`
 
@@ -161,6 +161,7 @@ export const PreguntasEjecucionExamenSchema = z.object({
   respuesta_id: z.string().nullable(),
   inicio: z.coerce.date().nullable(),
   final: z.coerce.date().nullable(),
+  retroalimentacion: z.string().nullable(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
   deleted_at: z.coerce.date().nullable(),
@@ -473,6 +474,7 @@ export const PreguntasEjecucionExamenSelectSchema: z.ZodType<Prisma.PreguntasEje
   respuesta_id: z.boolean().optional(),
   inicio: z.boolean().optional(),
   final: z.boolean().optional(),
+  retroalimentacion: z.boolean().optional(),
   created_at: z.boolean().optional(),
   updated_at: z.boolean().optional(),
   deleted_at: z.boolean().optional(),
@@ -1148,6 +1150,7 @@ export const PreguntasEjecucionExamenWhereInputSchema: z.ZodType<Prisma.Pregunta
   respuesta_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   inicio: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   final: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1164,6 +1167,7 @@ export const PreguntasEjecucionExamenOrderByWithRelationInputSchema: z.ZodType<P
   respuesta_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   inicio: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   final: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1197,6 +1201,7 @@ export const PreguntasEjecucionExamenWhereUniqueInputSchema: z.ZodType<Prisma.Pr
   respuesta_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   inicio: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   final: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -1213,6 +1218,7 @@ export const PreguntasEjecucionExamenOrderByWithAggregationInputSchema: z.ZodTyp
   respuesta_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   inicio: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   final: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  retroalimentacion: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
@@ -1231,6 +1237,7 @@ export const PreguntasEjecucionExamenScalarWhereWithAggregatesInputSchema: z.Zod
   respuesta_id: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   inicio: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   final: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -2407,6 +2414,7 @@ export const PreguntasEjecucionExamenCreateInputSchema: z.ZodType<Prisma.Pregunt
   id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -2423,6 +2431,7 @@ export const PreguntasEjecucionExamenUncheckedCreateInputSchema: z.ZodType<Prism
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -2433,6 +2442,7 @@ export const PreguntasEjecucionExamenUpdateInputSchema: z.ZodType<Prisma.Pregunt
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2449,6 +2459,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateInputSchema: z.ZodType<Prism
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2462,6 +2473,7 @@ export const PreguntasEjecucionExamenCreateManyInputSchema: z.ZodType<Prisma.Pre
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -2471,6 +2483,7 @@ export const PreguntasEjecucionExamenUpdateManyMutationInputSchema: z.ZodType<Pr
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2483,6 +2496,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyInputSchema: z.ZodType<P
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3767,6 +3781,7 @@ export const PreguntasEjecucionExamenCountOrderByAggregateInputSchema: z.ZodType
   respuesta_id: z.lazy(() => SortOrderSchema).optional(),
   inicio: z.lazy(() => SortOrderSchema).optional(),
   final: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -3779,6 +3794,7 @@ export const PreguntasEjecucionExamenMaxOrderByAggregateInputSchema: z.ZodType<P
   respuesta_id: z.lazy(() => SortOrderSchema).optional(),
   inicio: z.lazy(() => SortOrderSchema).optional(),
   final: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -3791,6 +3807,7 @@ export const PreguntasEjecucionExamenMinOrderByAggregateInputSchema: z.ZodType<P
   respuesta_id: z.lazy(() => SortOrderSchema).optional(),
   inicio: z.lazy(() => SortOrderSchema).optional(),
   final: z.lazy(() => SortOrderSchema).optional(),
+  retroalimentacion: z.lazy(() => SortOrderSchema).optional(),
   created_at: z.lazy(() => SortOrderSchema).optional(),
   updated_at: z.lazy(() => SortOrderSchema).optional(),
   deleted_at: z.lazy(() => SortOrderSchema).optional()
@@ -6598,6 +6615,7 @@ export const PreguntasEjecucionExamenCreateWithoutEjecucion_actual_deInputSchema
   id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -6613,6 +6631,7 @@ export const PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_actual_deIn
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -6627,6 +6646,7 @@ export const PreguntasEjecucionExamenCreateWithoutEjecucion_examenInputSchema: z
   id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -6641,6 +6661,7 @@ export const PreguntasEjecucionExamenUncheckedCreateWithoutEjecucion_examenInput
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -6781,6 +6802,7 @@ export const PreguntasEjecucionExamenUpdateWithoutEjecucion_actual_deInputSchema
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6796,6 +6818,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_actual_deIn
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6827,6 +6850,7 @@ export const PreguntasEjecucionExamenScalarWhereInputSchema: z.ZodType<Prisma.Pr
   respuesta_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   inicio: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   final: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  retroalimentacion: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   deleted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
@@ -7836,6 +7860,7 @@ export const PreguntasEjecucionExamenCreateWithoutPreguntaInputSchema: z.ZodType
   id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -7850,6 +7875,7 @@ export const PreguntasEjecucionExamenUncheckedCreateWithoutPreguntaInputSchema: 
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8097,6 +8123,7 @@ export const PreguntasEjecucionExamenCreateWithoutRespuestaInputSchema: z.ZodTyp
   id: z.string().cuid().optional(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -8111,6 +8138,7 @@ export const PreguntasEjecucionExamenUncheckedCreateWithoutRespuestaInputSchema:
   pregunta_id: z.string(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable(),
@@ -9669,6 +9697,7 @@ export const PreguntasEjecucionExamenCreateManyEjecucion_examenInputSchema: z.Zo
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9678,6 +9707,7 @@ export const PreguntasEjecucionExamenUpdateWithoutEjecucion_examenInputSchema: z
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9692,6 +9722,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutEjecucion_examenInput
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9704,6 +9735,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutEjecucion_examenI
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9855,6 +9887,7 @@ export const PreguntasEjecucionExamenCreateManyPreguntaInputSchema: z.ZodType<Pr
   respuesta_id: z.string().optional().nullable(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9924,6 +9957,7 @@ export const PreguntasEjecucionExamenUpdateWithoutPreguntaInputSchema: z.ZodType
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9938,6 +9972,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutPreguntaInputSchema: 
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9950,6 +9985,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutPreguntaInputSche
   respuesta_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9961,6 +9997,7 @@ export const PreguntasEjecucionExamenCreateManyRespuestaInputSchema: z.ZodType<P
   pregunta_id: z.string(),
   inicio: z.coerce.date().optional().nullable(),
   final: z.coerce.date().optional().nullable(),
+  retroalimentacion: z.string().optional().nullable(),
   created_at: z.coerce.date().optional(),
   updated_at: z.coerce.date().optional(),
   deleted_at: z.coerce.date().optional().nullable()
@@ -9970,6 +10007,7 @@ export const PreguntasEjecucionExamenUpdateWithoutRespuestaInputSchema: z.ZodTyp
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9984,6 +10022,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateWithoutRespuestaInputSchema:
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -9996,6 +10035,7 @@ export const PreguntasEjecucionExamenUncheckedUpdateManyWithoutRespuestaInputSch
   pregunta_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   inicio: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   final: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  retroalimentacion: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),

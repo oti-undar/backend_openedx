@@ -2,6 +2,7 @@ enum TipoExamen {
     Sync
     Async
     Solo
+    Alumno
 }
 
 model Examen {
@@ -74,7 +75,7 @@ model Respuesta {
     video             String?
     audio             String?
     correcta          Boolean @default(false)
-    retroalimentacion String?
+    retroalimentacion String? @db.Text
 
     pregunta_id               String
     pregunta                  Pregunta                   @relation(fields: [pregunta_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

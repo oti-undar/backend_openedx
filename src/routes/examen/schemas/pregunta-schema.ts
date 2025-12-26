@@ -10,4 +10,5 @@ export const preguntaSchemaExample = {
   puntos: 1,
   duracion: Prisma.Decimal(30),
   examen_id: 4,
+  retroalimentacion: 'Respuesta correcta',
 }

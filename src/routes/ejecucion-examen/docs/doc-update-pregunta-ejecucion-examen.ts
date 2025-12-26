@@ -25,6 +25,7 @@ const updatePreguntaEjecucionExamenSchema = PreguntasEjecucionExamenSchema.pick(
       })
         .merge(PreguntasEjecucionExamenSchema.pick({ pregunta_id: true }))
         .optional(),
+      retroalimentacion: z.string().optional(),
     })
   )
 
