@@ -56,6 +56,14 @@ export async function getEjecucionExamen({
           tipo_examen: true,
         },
       },
+      user: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+          username: true,
+        },
+      },
     },
   })
 
