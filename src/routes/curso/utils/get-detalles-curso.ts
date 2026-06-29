@@ -72,8 +72,11 @@ export async function getDetallesCurso({
       },
       examenes: {
         select: {
+          id: true,
+          title: true,
           peso: true,
         },
+        orderBy: { created_at: 'asc' },
       },
     },
   })
