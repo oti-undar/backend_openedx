@@ -101,6 +101,9 @@ export async function getExamenes({
         },
       },
     },
+    orderBy: {
+      created_at: 'asc',
+    },
   })
 
   return examenes
