@@ -1,5 +1,5 @@
 import type { dbTransaction } from '@/db/db.js'
-import type { CreateExamenCompleteSchemaProps } from '../docs/doc-create-examen.js'
+import type { EditExamenCompleteSchemaProps } from '../docs/doc-edit-examen.js'
 import { guardarArchivo } from '@/helpers/guardar-archivo.js'
 import cuid from 'cuid'
 import type { Examen } from '@prisma/client'
@@ -9,16 +9,23 @@ export async function editExamen({
   prisma,
   id,
 }: {
-  item: CreateExamenCompleteSchemaProps
+  item: EditExamenCompleteSchemaProps
   prisma: dbTransaction
   id: Examen['id']
 }) {
-  const { preguntas, archivo: archivo_examen, ...examenData } = item
+  const {
+    preguntas,
+    archivo: archivo_examen,
+    remove_archivo,
+    ...examenData
+  } = item
 
   const cuid_examen = id
   let file_examen: string | null = null
   let tipo_examen: 'img' | 'audio' | 'video' | null = null
-  if (archivo_examen) {
+  if (remove_archivo) {
+    // Señal explícita de borrado: no reemplaza, solo limpia. No confundir con "no llegó archivo".
+  } else if (archivo_examen) {
     const { file: file_archivo, tipo: tipo_archivo } = await guardarArchivo({
       archivo: archivo_examen,
       path_file_sin_extension: `/examenes/${cuid_examen}`,
@@ -39,6 +46,7 @@ export async function editExamen({
     },
     data: {
       ...examenData,
+      ...(remove_archivo && { img: null, video: null, audio: null }),
       ...(tipo_examen &&
         file_examen && {
           [tipo_examen]: file_examen,

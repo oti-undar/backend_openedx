@@ -74,6 +74,8 @@ const EditExamenSchema = addOptionalToNullable(ExamenSchema)
       .transform(val => Number(val))
       .refine(val => !isNaN(val), { message: 'peso inválido' }),
     archivo: fileSchema,
+    // Viene como string por multipart/form-data ('true' cuando se borró la imagen; ausente en cualquier otro caso).
+    remove_archivo: z.preprocess(val => val === 'true', z.boolean()).optional(),
     preguntas: z.any().openapi({
       example: [
         {
